@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     private var premiumCountriesDataList: ArrayList<PremiumSingleCountryData> = ArrayList() //Lista de paises con info premium completa
     private val retrofit = ConnectionManager.getInstance().getRetrofit()
     private var bottomBar: BottomNavigationView? = null
+    var b = 3
 
     //Para instanciar los DAO
     private var countryDAO: CountryDAO? = null
