@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="85dp"
+    android:paddingHorizontal="20dp"
+    android:paddingVertical="15dp"
+    android:background="@drawable/background_item_country">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tviCountryPosition"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="194."
+            android:textSize="20sp"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/black"
+            android:layout_marginEnd="10dp" />
+
+        <RelativeLayout
+            android:layout_width="0sp"
+            android:layout_height="match_parent"
+            android:layout_weight="20">
+            <TextView
+                android:id="@+id/tviCountryNameR"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingTop="5dp"
+                android:text="@string/australia"
+                android:textColor="@color/black"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/tviCountryInfoR"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/additional_info"
+                android:textSize="15sp"
+                android:layout_alignBottom="@id/tviCountryNameR"
+                android:layout_alignParentBottom="true"
+                android:textColor="#333333"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/ic_home"
+        android:icon="@drawable/ic_baseline_home_24"
+        android:title="@string/home"/>
+
+    <item
+        android:id="@+id/ic_countries"
+        android:icon="@drawable/ic_baseline_list_24"
+        android:title="@string/countries"/>
+
+    <item
+        android:id="@+id/ic_ranking"
+        android:icon="@drawable/ic_baseline_format_list_numbered_24"
+        android:title="@string/ranking"/>
+
+    <item
+        android:id="@+id/ic_favorites"
+        android:icon="@drawable/ic_baseline_star_24"
+        android:title="@string/favorites"/>
+
+</menu>

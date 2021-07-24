@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F2F7FC">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100sp"
+        android:layout_marginBottom="40sp"
+        android:gravity="center"
+        android:text="@string/welcome_to_the_covid_info_app"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/butSynchronize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/view_global_statistics"
+        android:textAllCaps="false"
+        android:textColor="#303030"
+        android:textSize="18sp" />
+
+</LinearLayout>
