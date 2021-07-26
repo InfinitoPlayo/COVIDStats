@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/design_default_color_background"
-    android:backgroundTint="#F2F7FC"
+    android:backgroundTint="@color/verylightblue"
     android:orientation="vertical"
     tools:context=".MainActivity"
     tools:targetApi="lollipop">
 
     <com.github.mikephil.charting.charts.PieChart
-        android:layout_height="300dp"
-        android:layout_width="match_parent"
         android:id="@+id/pchGlobalData"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
         android:layout_marginHorizontal="20sp"
-        android:layout_marginTop="50sp"/>
+        android:layout_marginTop="50sp" />
 
     <TextView
         android:id="@+id/tviDateGlobal"
@@ -23,15 +24,15 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20sp"
         android:layout_marginTop="30dp"
-        android:text="Last updated: DATE"/>
+        android:text="@string/last_updated" />
 
     <TextView
-        android:id="@+id/tviTotalConfirmedGlobal"
+        android:id="@+id/tviConfirmedGlobal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20sp"
         android:layout_marginTop="20dp"
-        android:text="Total confirmed cases: 675449185"/>
+        android:text="@string/total_confirmed_cases" />
 
     <TextView
         android:id="@+id/tviTotalDeathsGlobal"
@@ -39,22 +40,47 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20sp"
         android:layout_marginTop="10dp"
-        android:text="Total deaths: 93574429" />
+        android:text="@string/total_deaths" />
 
     <TextView
-        android:id="@+id/tviTotalRecoveredGlobal"
+        android:id="@+id/tviRecoveredGlobal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20sp"
         android:layout_marginTop="10dp"
-        android:text="Total recovered: 432554396" />
+        android:text="@string/total_recovered" />
 
     <TextView
-        android:id="@+id/tviTotalActiveCasesGlobal"
+        android:id="@+id/tviActiveCasesGlobal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20sp"
         android:layout_marginTop="10dp"
-        android:text="Total active cases: 62896495" />
+        android:text="@string/total_active_cases" />
+
+    <TextView
+        android:id="@+id/tviNewCasesGlobal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20sp"
+        android:layout_marginTop="10dp"
+        android:text="@string/new_cases" />
+
+    <TextView
+        android:id="@+id/tviNewRecoveredGlobal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20sp"
+        android:layout_marginTop="10dp"
+        android:text="@string/new_recovered" />
+
+    <TextView
+        android:id="@+id/tviNewDeathsGlobal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20sp"
+        android:layout_marginTop="10dp"
+        android:text="@string/new_deaths" />
+
 
 </LinearLayout>

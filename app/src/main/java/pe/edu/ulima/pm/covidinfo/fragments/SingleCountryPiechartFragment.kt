@@ -26,6 +26,7 @@ import pe.edu.ulima.pm.covidinfo.models.dao.PremiumSingleCountryData
 import pe.edu.ulima.pm.covidinfo.models.persistence.dao.FavoriteDAO
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.FavoriteEntity
 import pe.edu.ulima.pm.covidinfo.objects.PremiumSingleCountryStats
+import java.text.DecimalFormat
 
 class SingleCountryPiechartFragment: Fragment() {
 
@@ -66,22 +67,26 @@ class SingleCountryPiechartFragment: Fragment() {
         coloredStar = ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_star_yellow_24)!!
 
         setPieChart()
-
         lifecycleScope.launch { isFavorite(PremiumSingleCountryStats.country!!) }
 
-        //Llamando a los TextView de fragment_global_info
         tviDateCountry = view.findViewById(R.id.tviDateCountry)
         tviTotalConfirmedCountry = view.findViewById(R.id.tviTotalConfirmedCountry)
         tviTotalDeathsCountry = view.findViewById(R.id.tviTotalDeathsCountry)
         tviTotalRecoveredCountry = view.findViewById(R.id.tviTotalRecoveredCountry)
         tviTotalActiveCasesCountry = view.findViewById(R.id.tviTotalActiveCasesCountry)
 
+        val formattedDate = sc!!.Date.substring(0, 10).replace("-", " / ")
+        val formattedHour = sc!!.Date.substring(11, 19)
+        val formattedDateHour = "$formattedDate at $formattedHour"
+        val df = DecimalFormat("###,###,###")
+
+
         // Seteando los TextView
-        tviDateCountry.text = "Last updated: ${sc!!.Date}"
-        tviTotalConfirmedCountry.text = "Total cases: ${sc!!.TotalCases}"
-        tviTotalDeathsCountry.text = "Total deaths: ${sc!!.TotalDeaths}"
-        tviTotalRecoveredCountry.text = "Total cases per million: ${sc!!.TotalCasesPerMillion}"
-        tviTotalActiveCasesCountry.text = "Total deaths per million: ${sc!!.TotalDeathsPerMillion}"
+        tviDateCountry.text = "Last updated: $formattedDateHour"
+        tviTotalConfirmedCountry.text = "Total cases: ${df.format(sc!!.TotalCases)}"
+        tviTotalDeathsCountry.text = "Total deaths: ${df.format(sc!!.TotalDeaths)}"
+        tviTotalRecoveredCountry.text = "Total cases per million: ${df.format(sc!!.TotalCasesPerMillion)}"
+        tviTotalActiveCasesCountry.text = "Total deaths per million: ${df.format(sc!!.TotalDeathsPerMillion)}"
 
         butAddFavorite!!.setOnClickListener {
 
@@ -117,7 +122,7 @@ class SingleCountryPiechartFragment: Fragment() {
 
         pieDataSet.colors = colors
         pieData.setValueTextSize(10f)
-        pchSingleCountry.animateXY(2000,2000)
+        pchSingleCountry.animateXY(1500,1500)
         pchSingleCountry.data = pieData
         pchSingleCountry.description.text=""
         pchSingleCountry.setCenterTextSize(50f)

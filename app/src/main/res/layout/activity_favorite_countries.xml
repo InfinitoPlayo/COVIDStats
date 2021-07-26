@@ -14,7 +14,8 @@
         android:background="@color/colorPrimary"
         android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
         app:title="COVID Stats"
-        app:navigationIcon="@drawable/ic_baseline_local_airport_24"/>
+        app:navigationIcon="@drawable/covidstats_24"
+        app:titleTextColor="@color/lightgrey"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -39,8 +40,8 @@
         android:layout_height="wrap_content"
         android:background="?android:attr/windowBackground"
         app:itemBackground="@color/colorPrimary"
-        app:itemIconTint="@color/black"
-        app:itemTextColor="@color/black"
+        app:itemIconTint="@color/lightgrey"
+        app:itemTextColor="@color/lightgrey"
         app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom_menu" />
 

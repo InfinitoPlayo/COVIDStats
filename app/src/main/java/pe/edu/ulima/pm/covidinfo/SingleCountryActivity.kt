@@ -76,7 +76,7 @@ class SingleCountryActivity: AppCompatActivity() {
                 }
                 //Click en el icono de lista de paises
                 R.id.ic_countries -> {
-                    val intent = Intent(this, CountriesListActivity::class.java)
+                    val intent = Intent(this, CountriesInfoActivity::class.java)
                     startActivity(intent)
                 }
                 //Click en el icono de ranking de paises

@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity() {
     private var premiumCountriesDataList: ArrayList<PremiumSingleCountryData> = ArrayList() //Lista de paises con info premium completa
     private val retrofit = ConnectionManager.getInstance().getRetrofit()
     private var bottomBar: BottomNavigationView? = null
-    var b = 3
 
     //Para instanciar los DAO
     private var countryDAO: CountryDAO? = null
@@ -80,7 +79,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 //Click en el icono de lista de paises
                 R.id.ic_countries -> {
-                    val intent = Intent(this, CountriesListActivity::class.java)
+                    val intent = Intent(this, CountriesInfoActivity::class.java)
                     startActivity(intent)
                 }
                 //Click en el icono de ranking de paises

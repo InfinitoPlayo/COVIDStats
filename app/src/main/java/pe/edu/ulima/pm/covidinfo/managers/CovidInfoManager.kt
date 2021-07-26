@@ -214,4 +214,5 @@ class CovidInfoManager {
             country.CaseFatalityRatio)
 
     }
+
 }

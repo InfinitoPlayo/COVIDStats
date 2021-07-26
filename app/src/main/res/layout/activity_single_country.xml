@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainActivity"
@@ -20,25 +20,50 @@
             android:background="@color/colorPrimary"
             android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
             app:title="COVID Stats"
-            app:navigationIcon="@drawable/ic_baseline_local_airport_24"/>
+            app:navigationIcon="@drawable/covidstats_24"
+            app:titleTextColor="@color/lightgrey"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"/>
 
-        <TextView
-            android:id="@+id/tviSingleCountryTitle"
-            android:layout_width="match_parent"
+        <ScrollView
+            android:id="@+id/sviMain"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:gravity="center"
-            android:layout_margin="20sp"
-            android:text="@string/stats_for_australia"
-            android:textSize="25sp"
-            android:textColor="#505050"
-            android:textStyle="bold"
-            android:layout_weight="1"/>
+            android:layout_marginBottom="58dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tbaMain"
+            app:layout_constraintVertical_bias="0.0">
 
-        <FrameLayout
-            android:id="@+id/flaSingleCountry"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="16"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tviSingleCountryTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20sp"
+                    android:gravity="center"
+                    android:text="@string/stats_for_australia"
+                    android:textColor="#505050"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
+
+                <FrameLayout
+                    android:id="@+id/flaSingleCountry"
+                    android:layout_width="match_parent"
+                    android:layout_height="700dp" />
+
+            </LinearLayout>
+
+        </ScrollView>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bnvSingleCountry"
@@ -46,12 +71,18 @@
             android:layout_height="wrap_content"
             android:background="?android:attr/windowBackground"
             app:itemBackground="@color/colorPrimary"
-            app:itemIconTint="@color/black"
-            app:itemTextColor="@color/black"
+            app:itemIconTint="@color/lightgrey"
+            app:itemTextColor="@color/lightgrey"
             app:labelVisibilityMode="labeled"
-            app:menu="@menu/bottom_menu" />
+            app:menu="@menu/bottom_menu"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
 
-    </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nviSingleCountry"
@@ -59,6 +90,12 @@
         android:layout_height="match_parent"
         app:menu="@menu/left_menu"
         android:layout_gravity="start"
-        app:headerLayout="@layout/navigation_header"/>
+        app:headerLayout="@layout/navigation_header"
+        android:background="@color/verylightblue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

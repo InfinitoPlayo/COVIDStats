@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/design_default_color_background"
-    android:backgroundTint="#F2F7FC"
+    android:backgroundTint="@color/verylightblue"
     android:orientation="vertical"
     tools:context=".MainActivity"
     tools:targetApi="lollipop">

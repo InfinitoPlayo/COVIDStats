@@ -12,9 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
-        android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
+        android:theme="@style/ToolbarColoredBackArrow"
         app:title="COVID Stats"
-        app:navigationIcon="@drawable/ic_baseline_local_airport_24"/>
+        app:navigationIcon="@drawable/covidstats_24"
+        app:titleTextColor="@color/lightgrey"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -27,11 +28,13 @@
         android:textColor="#505050"
         android:textStyle="bold"/>
 
-    <FrameLayout
-        android:id="@+id/flaCountriesRank"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rviCountriesRank"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="16"/>
+        android:layout_weight="16"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_country_rank" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bnvCountriesRank"
@@ -39,8 +42,8 @@
         android:layout_height="wrap_content"
         android:background="?android:attr/windowBackground"
         app:itemBackground="@color/colorPrimary"
-        app:itemIconTint="@color/black"
-        app:itemTextColor="@color/black"
+        app:itemIconTint="@color/lightgrey"
+        app:itemTextColor="@color/lightgrey"
         app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom_menu" />
 

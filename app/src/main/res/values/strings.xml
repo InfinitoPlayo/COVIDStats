@@ -25,4 +25,15 @@
     <string name="countries">Countries</string>
     <string name="favorite_countries">Favorite countries</string>
     <string name="covid_info">COVID Info</string>
+    <string name="search">Search</string>
+    <string name="example">Example</string>
+    <string name="last_updated">Last updated:</string>
+    <string name="total_confirmed_cases">Total confirmed cases:</string>
+    <string name="total_deaths">Total deaths:</string>
+    <string name="total_recovered">Total recovered:</string>
+    <string name="total_active_cases">Total active cases:</string>
+    <string name="new_cases">New cases:</string>
+    <string name="new_recovered">New recovered:</string>
+    <string name="new_deaths">New deaths:</string>
+    <string name="total_cases">Total cases:</string>
 </resources>
