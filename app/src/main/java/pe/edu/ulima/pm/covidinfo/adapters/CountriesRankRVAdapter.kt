@@ -9,9 +9,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import pe.edu.ulima.pm.covidinfo.R
 import pe.edu.ulima.pm.covidinfo.models.dao.PremiumSingleCountryData
+import pe.edu.ulima.pm.covidinfo.models.persistence.entities.CountryEntity
 
 interface OnCountryRankItemClickListener {
-    fun onClick(country: PremiumSingleCountryData)
+    fun onClick(country: CountryEntity)
 }
 
 class CountriesRankRVAdapter: RecyclerView.Adapter<CountriesRankRVAdapter.ViewHolder> {
@@ -28,11 +29,11 @@ class CountriesRankRVAdapter: RecyclerView.Adapter<CountriesRankRVAdapter.ViewHo
         }
     }
 
-    private var countries: ArrayList<PremiumSingleCountryData>? = null
+    private var countries: ArrayList<CountryEntity>? = null
     private var listener: OnCountryRankItemClickListener? = null
     private var context: Context? = null
 
-    constructor(countries : ArrayList<PremiumSingleCountryData>,
+    constructor(countries : ArrayList<CountryEntity>,
                 listener: OnCountryRankItemClickListener,
                 context: Context) : super() {
         this.countries = countries

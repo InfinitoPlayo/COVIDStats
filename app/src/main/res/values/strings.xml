@@ -36,4 +36,28 @@
     <string name="new_recovered">New recovered:</string>
     <string name="new_deaths">New deaths:</string>
     <string name="total_cases">Total cases:</string>
+    <string name="title_activity_splash_screen">SplashScreenActivity</string>
+    <string name="total_confirmed_cases_">Total confirmed cases</string>
+    <string name="total_active_cases_">Total active cases</string>
+    <string name="total_recovered_">Total recovered</string>
+    <string name="total_deaths_">Total deaths</string>
+    <string name="new_confirmed_cases_">New confirmed cases</string>
+    <string name="new_deaths_">New deaths</string>
+    <string name="new_recovered_">New recovered</string>
+    <string name="new_active_cases_">New active cases</string>
+    <string name="historical_data">Historical data</string>
+    <string name="last_report_data">Last report data</string>
+    <string name="_156234858">156234858</string>
+    <string name="total_cases_per_million">Total cases per million</string>
+    <string name="total_deaths_per_million">Total deaths per million</string>
+    <string name="mortality_ratio">Mortality ratio</string>
+    <string name="total_deaths_per_100k">Total deaths per 100k</string>
+    <string name="new_cases_per_million">New cases per million</string>
+    <string name="new_cases_per_100k">New cases per 100k</string>
+    <string name="new_deaths_per_100k">New deaths per 100k</string>
+    <string name="new_deaths_per_million">New deaths per million</string>
+    <string name="total_cases_per_100k">Total cases per 100k</string>
+    <string name="global_stats">Global stats</string>
+    <string name="my_country">My country</string>
+
 </resources>

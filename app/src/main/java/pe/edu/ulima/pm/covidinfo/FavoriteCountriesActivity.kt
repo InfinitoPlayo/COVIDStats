@@ -49,5 +49,4 @@ class FavoriteCountriesActivity: AppCompatActivity() {
 
     }
 
-
 }

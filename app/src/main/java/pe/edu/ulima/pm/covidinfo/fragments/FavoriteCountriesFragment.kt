@@ -15,7 +15,7 @@ import pe.edu.ulima.pm.covidinfo.R
 import pe.edu.ulima.pm.covidinfo.SingleCountryActivity
 import pe.edu.ulima.pm.covidinfo.adapters.FavoriteCountriesRVAdapter
 import pe.edu.ulima.pm.covidinfo.adapters.OnFavoriteCountryItemClickListener
-import pe.edu.ulima.pm.covidinfo.managers.ConnectionManager
+import pe.edu.ulima.pm.covidinfo.managers.CovidAPIConnectionManager
 import pe.edu.ulima.pm.covidinfo.managers.CovidInfoManager
 import pe.edu.ulima.pm.covidinfo.models.AppDatabase
 import pe.edu.ulima.pm.covidinfo.models.dao.CovidAPIService
@@ -29,7 +29,7 @@ class FavoriteCountriesFragment: Fragment(), OnFavoriteCountryItemClickListener 
 
     private var rviFavoriteCountries: RecyclerView? = null
     private var countryName: String? = null
-    private val retrofit = ConnectionManager.getInstance().getRetrofit()
+    private val retrofit = CovidAPIConnectionManager.getInstance().getRetrofit()
     private var loadingDialog: LoadingDialog? = null
     private var favorites : ArrayList<FavoriteEntity> = ArrayList()
     private var favoriteDAO: FavoriteDAO? = null
@@ -54,9 +54,14 @@ class FavoriteCountriesFragment: Fragment(), OnFavoriteCountryItemClickListener 
         lifecycleScope.launch {
 
             favorites = ArrayList(favoriteDAO!!.getAllFavorites())
+
+            if (favorites.isNotEmpty()){
+                CovidInfoManager.getInstance().updateFavorites(favorites, view.context)
+            }
             val favoriteCountriesRVAdapter = FavoriteCountriesRVAdapter(favorites, this@FavoriteCountriesFragment, view.context)
             rviFavoriteCountries!!.adapter = favoriteCountriesRVAdapter
         }
+
 
     }
 
@@ -76,7 +81,7 @@ class FavoriteCountriesFragment: Fragment(), OnFavoriteCountryItemClickListener 
 
     override fun onClick(country: FavoriteEntity) {
         //Actualizando el Singleton con la info del pais seleccionado
-        PremiumSingleCountryStats.country = CovidInfoManager.getInstance().setPremiumSingleCountryDataFromFavorite(country)
+        PremiumSingleCountryStats.country = CovidInfoManager.getInstance().setPremiumSingleCountryDataFromCountryEntity(country)
         // Para obtener el nombre del pais en minusculas y sin espacios
         countryName = country.Country.replace(" ", "-").lowercase()
 

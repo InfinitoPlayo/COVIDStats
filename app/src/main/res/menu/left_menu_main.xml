@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item android:id="@+id/mnuGlobalInfo"
+            android:checked="true"
+            android:title="@string/global_stats"/>
+
+        <item android:id="@+id/mnuMyCountry"
+            android:title="@string/my_country"/>
+
+    </group>
+
+</menu>

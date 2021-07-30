@@ -17,13 +17,13 @@ import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
-import com.github.mikephil.charting.utils.ColorTemplate
 import kotlinx.coroutines.launch
 import pe.edu.ulima.pm.covidinfo.R
 import pe.edu.ulima.pm.covidinfo.managers.CovidInfoManager
 import pe.edu.ulima.pm.covidinfo.models.AppDatabase
 import pe.edu.ulima.pm.covidinfo.models.dao.PremiumSingleCountryData
 import pe.edu.ulima.pm.covidinfo.models.persistence.dao.FavoriteDAO
+import pe.edu.ulima.pm.covidinfo.models.persistence.entities.CountryEntity
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.FavoriteEntity
 import pe.edu.ulima.pm.covidinfo.objects.PremiumSingleCountryStats
 import java.text.DecimalFormat
@@ -31,10 +31,23 @@ import java.text.DecimalFormat
 class SingleCountryPiechartFragment: Fragment() {
 
     private lateinit var tviDateCountry: TextView
+
     private lateinit var tviTotalConfirmedCountry: TextView
     private lateinit var tviTotalDeathsCountry: TextView
-    private lateinit var tviTotalRecoveredCountry: TextView
-    private lateinit var tviTotalActiveCasesCountry: TextView
+    private lateinit var tviMortalityRatioCountry: TextView
+    private lateinit var tviTotalCasesPerMillion: TextView
+    private lateinit var tviTotalDeathsPerMillion: TextView
+    private lateinit var tviTotalCasesPer100k: TextView
+    private lateinit var tviTotalDeathsPer100k: TextView
+
+    private lateinit var tviNewConfirmedCountry: TextView
+    private lateinit var tviNewDeathsCountry: TextView
+    private lateinit var tviNewMortalityRatioCountry: TextView
+    private lateinit var tviNewCasesPerMillion: TextView
+    private lateinit var tviNewDeathsPerMillion: TextView
+    private lateinit var tviNewCasesPer100k: TextView
+    private lateinit var tviNewDeathsPer100k: TextView
+
     private var sc = PremiumSingleCountryStats.country //Singleton que contiene stats del pais seleccionado
 
     private var butAddFavorite: Button? = null
@@ -48,6 +61,8 @@ class SingleCountryPiechartFragment: Fragment() {
     private lateinit var emptyStar: Drawable
     private lateinit var coloredStar: Drawable
 
+    //private var country: PremiumSingleCountryData? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,6 +74,9 @@ class SingleCountryPiechartFragment: Fragment() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //Se obtiene la lista de paises de MainActivity
+        //country = requireActivity().intent.getSerializableExtra("PremiumSingleCountryData") as PremiumSingleCountryData
 
         pchSingleCountry = view.findViewById(R.id.pchSingleCountry)
         favoriteDAO = AppDatabase.getInstance(view.context).favoriteDAO
@@ -72,21 +90,47 @@ class SingleCountryPiechartFragment: Fragment() {
         tviDateCountry = view.findViewById(R.id.tviDateCountry)
         tviTotalConfirmedCountry = view.findViewById(R.id.tviTotalConfirmedCountry)
         tviTotalDeathsCountry = view.findViewById(R.id.tviTotalDeathsCountry)
-        tviTotalRecoveredCountry = view.findViewById(R.id.tviTotalRecoveredCountry)
-        tviTotalActiveCasesCountry = view.findViewById(R.id.tviTotalActiveCasesCountry)
+        tviMortalityRatioCountry = view.findViewById(R.id.tviMortalityRatioCountry)
+        tviTotalCasesPerMillion = view.findViewById(R.id.tviTotalCasesPerMillion)
+        tviTotalDeathsPerMillion = view.findViewById(R.id.tviTotalDeathsPerMillion)
+        tviTotalCasesPer100k = view.findViewById(R.id.tviTotalCasesPer100k)
+        tviTotalDeathsPer100k = view.findViewById(R.id.tviTotalDeathsPer100k)
 
-        val formattedDate = sc!!.Date.substring(0, 10).replace("-", " / ")
+        tviNewConfirmedCountry = view.findViewById(R.id.tviNewConfirmedCountry)
+        tviNewDeathsCountry = view.findViewById(R.id.tviNewDeathsCountry)
+        tviNewMortalityRatioCountry = view.findViewById(R.id.tviNewMortalityRatioCountry)
+        tviNewCasesPerMillion = view.findViewById(R.id.tviNewCasesPerMillion)
+        tviNewDeathsPerMillion = view.findViewById(R.id.tviNewDeathsPerMillion)
+        tviNewCasesPer100k = view.findViewById(R.id.tviNewCasesPer100k)
+        tviNewDeathsPer100k = view.findViewById(R.id.tviNewDeathsPer100k)
+
+        val formattedDate = sc!!.Date.substring(0, 10).replace("-", "/")
         val formattedHour = sc!!.Date.substring(11, 19)
-        val formattedDateHour = "$formattedDate at $formattedHour"
         val df = DecimalFormat("###,###,###")
 
-
         // Seteando los TextView
-        tviDateCountry.text = "Last updated: $formattedDateHour"
-        tviTotalConfirmedCountry.text = "Total cases: ${df.format(sc!!.TotalCases)}"
-        tviTotalDeathsCountry.text = "Total deaths: ${df.format(sc!!.TotalDeaths)}"
-        tviTotalRecoveredCountry.text = "Total cases per million: ${df.format(sc!!.TotalCasesPerMillion)}"
-        tviTotalActiveCasesCountry.text = "Total deaths per million: ${df.format(sc!!.TotalDeathsPerMillion)}"
+        tviDateCountry.text = "Last updated: $formattedDate at $formattedHour"
+        tviTotalConfirmedCountry.text = df.format(sc?.TotalCases)
+        tviTotalDeathsCountry.text = df.format(sc?.TotalDeaths)
+        tviMortalityRatioCountry.text = String.format("%.2f", sc?.CaseFatalityRatio) + "%"
+        tviTotalCasesPerMillion.text = df.format(String.format("%.2f", sc?.TotalCasesPerMillion).toDouble())
+        tviTotalDeathsPerMillion.text = df.format(String.format("%.2f", sc?.TotalDeathsPerMillion).toDouble())
+        tviTotalCasesPer100k.text = df.format(String.format("%.2f", sc?.IncidenceRiskConfirmedPerHundredThousand).toDouble())
+        tviTotalDeathsPer100k.text = df.format(String.format("%.2f", sc?.IncidenceRiskDeathsPerHundredThousand).toDouble())
+
+        tviNewConfirmedCountry.text = sc?.NewCases.toString()
+        tviNewDeathsCountry.text = sc?.NewDeaths.toString()
+
+        if(sc!!.NewCases.toInt() != 0) {
+            tviNewMortalityRatioCountry.text = String.format("%.2f", sc!!.NewDeaths.toDouble()*100.0 / (sc!!.NewCases.toDouble()+1.0)) + "%"
+        } else {
+            tviNewMortalityRatioCountry.text = "-"
+        }
+
+        tviNewCasesPerMillion.text = df.format(String.format("%.2f", sc?.NewCasesPerMillion).toDouble())
+        tviNewDeathsPerMillion.text = df.format(String.format("%.2f", sc?.NewDeathsPerMillion).toDouble())
+        tviNewCasesPer100k.text = df.format(String.format("%.2f", sc?.IncidenceRiskNewConfirmedPerHundredThousand).toDouble())
+        tviNewDeathsPer100k.text = df.format(String.format("%.2f", sc?.IncidenceRiskNewDeathsPerHundredThousand).toDouble())
 
         butAddFavorite!!.setOnClickListener {
 
@@ -96,13 +140,13 @@ class SingleCountryPiechartFragment: Fragment() {
                 Log.i("SingleCountryPiechart", isFavorite.toString())
                 if(isFavorite == 1) {
                     favoriteDAO!!.deleteSingleFavorite(favoriteEntity.ID)
-                    Toast.makeText(context, "${PremiumSingleCountryStats.country!!.Country} removed from favorites", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "${sc?.Country} removed from favorites", Toast.LENGTH_SHORT).show()
                     butAddFavorite!!.background = emptyStar
                     isFavorite = 0
 
                 } else {
                     favoriteDAO!!.insertFavorite(favoriteEntity)
-                    Toast.makeText(context, "${PremiumSingleCountryStats.country!!.Country} added to favorites", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "${sc?.Country} added to favorites", Toast.LENGTH_SHORT).show()
                     butAddFavorite!!.background = coloredStar
                     isFavorite = 1
                 }
@@ -117,14 +161,15 @@ class SingleCountryPiechartFragment: Fragment() {
         val pieDataSet = PieDataSet(getList().toCollection(ArrayList()), "")
         val pieData = PieData(pieDataSet)
 
-        colors.add(ColorTemplate.MATERIAL_COLORS[1])
-        colors.add(ColorTemplate.MATERIAL_COLORS[2])
+        colors.add(ContextCompat.getColor(requireContext(), R.color.blue_500))
+        colors.add(ContextCompat.getColor(requireContext(), R.color.red_500))
 
         pieDataSet.colors = colors
         pieData.setValueTextSize(10f)
         pchSingleCountry.animateXY(1500,1500)
         pchSingleCountry.data = pieData
         pchSingleCountry.description.text=""
+        pchSingleCountry.setHoleColor(ContextCompat.getColor(requireContext(), R.color.lightblue))
         pchSingleCountry.setCenterTextSize(50f)
         pchSingleCountry.invalidate()
     }
@@ -137,7 +182,7 @@ class SingleCountryPiechartFragment: Fragment() {
         return dataList
     }
 
-    private suspend fun isFavorite(country: PremiumSingleCountryData) {
+    private suspend fun isFavorite(country: CountryEntity) {
 
         favoriteDAO = AppDatabase.getInstance(requireContext()).favoriteDAO
 
@@ -146,7 +191,7 @@ class SingleCountryPiechartFragment: Fragment() {
         Log.i("SingleCountryPieChart", query.toString())
 
 
-        if (favoriteDAO!!.getSingleFavorite(country.ID) == null) {
+        if (query == null) {
             butAddFavorite!!.background = emptyStar
             isFavorite = 0
         } else {

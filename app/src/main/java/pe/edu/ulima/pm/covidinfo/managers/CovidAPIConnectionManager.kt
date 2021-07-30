@@ -4,14 +4,14 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 //Configurar conexion al API
-class ConnectionManager {
+class CovidAPIConnectionManager {
 
     companion object{
-        private var instance:ConnectionManager? = null
+        private var instance:CovidAPIConnectionManager? = null
 
-        fun getInstance() : ConnectionManager {
+        fun getInstance() : CovidAPIConnectionManager {
             if (instance == null) {
-                instance = ConnectionManager()
+                instance = CovidAPIConnectionManager()
             }
             return instance!!
         }

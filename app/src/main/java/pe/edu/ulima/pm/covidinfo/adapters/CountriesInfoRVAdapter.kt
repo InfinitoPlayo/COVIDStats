@@ -9,9 +9,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import pe.edu.ulima.pm.covidinfo.models.dao.PremiumSingleCountryData
 import pe.edu.ulima.pm.covidinfo.R
+import pe.edu.ulima.pm.covidinfo.models.persistence.entities.CountryEntity
+import java.text.DecimalFormat
 
 interface OnCountryInfoItemClickListener {
-    fun onClick(country: PremiumSingleCountryData)
+    fun onClick(country: CountryEntity)
 }
 
 class CountriesInfoRVAdapter: RecyclerView.Adapter<CountriesInfoRVAdapter.ViewHolder> {
@@ -26,11 +28,11 @@ class CountriesInfoRVAdapter: RecyclerView.Adapter<CountriesInfoRVAdapter.ViewHo
         }
     }
 
-    private var countries: ArrayList<PremiumSingleCountryData>? = null
+    private var countries: ArrayList<CountryEntity>? = null
     private var listener: OnCountryInfoItemClickListener? = null
     private var context: Context? = null
 
-    constructor(countries : ArrayList<PremiumSingleCountryData>,
+    constructor(countries : ArrayList<CountryEntity>,
                 listener: OnCountryInfoItemClickListener,
                 context: Context) : super() {
         this.countries = countries
@@ -45,10 +47,11 @@ class CountriesInfoRVAdapter: RecyclerView.Adapter<CountriesInfoRVAdapter.ViewHo
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val country = countries!![position]
+        val df = DecimalFormat("###,###,###")
 
         //Se muestran los datos de la competicion en el RecyclerView
         holder.tviCountryName!!.text = country.Country
-        holder.tviCountryInfo!!.text = "Confirmed cases: ${country.TotalCases}"
+        holder.tviCountryInfo!!.text = "Confirmed cases: ${df.format(country.TotalCases)}"
 
         holder.itemView.setOnClickListener {
             listener!!.onClick(countries!![position])

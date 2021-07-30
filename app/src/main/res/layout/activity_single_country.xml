@@ -43,7 +43,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:background="@color/verylightblue">
 
                 <TextView
                     android:id="@+id/tviSingleCountryTitle"
@@ -59,7 +60,7 @@
                 <FrameLayout
                     android:id="@+id/flaSingleCountry"
                     android:layout_width="match_parent"
-                    android:layout_height="700dp" />
+                    android:layout_height="1760dp" />
 
             </LinearLayout>
 
@@ -88,14 +89,9 @@
         android:id="@+id/nviSingleCountry"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        app:menu="@menu/left_menu"
+        app:menu="@menu/left_menu_country"
         android:layout_gravity="start"
         app:headerLayout="@layout/navigation_header"
-        android:background="@color/verylightblue"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"/>
+        android:background="@color/verylightblue" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

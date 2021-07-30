@@ -13,11 +13,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 import pe.edu.ulima.pm.covidinfo.adapters.CountriesInfoRVAdapter
 import pe.edu.ulima.pm.covidinfo.adapters.OnCountryInfoItemClickListener
-import pe.edu.ulima.pm.covidinfo.managers.ConnectionManager
+import pe.edu.ulima.pm.covidinfo.managers.CovidAPIConnectionManager
+import pe.edu.ulima.pm.covidinfo.models.AppDatabase
 import pe.edu.ulima.pm.covidinfo.models.dao.CovidAPIService
-import pe.edu.ulima.pm.covidinfo.models.dao.PremiumSingleCountryData
+import pe.edu.ulima.pm.covidinfo.models.persistence.dao.CountryDAO
+import pe.edu.ulima.pm.covidinfo.models.persistence.entities.CountryEntity
 import pe.edu.ulima.pm.covidinfo.objects.InternetConnection
-import pe.edu.ulima.pm.covidinfo.objects.PremiumGlobalDataInfo
 import pe.edu.ulima.pm.covidinfo.objects.PremiumSingleCountryStats
 import pe.edu.ulima.pm.covidinfo.objects.SingleCountryHistoricalStats
 import java.util.*
@@ -28,18 +29,32 @@ class CountriesInfoActivity: AppCompatActivity(), OnCountryInfoItemClickListener
     private var title: TextView? = null
     private var toolbar: androidx.appcompat.widget.Toolbar? = null
     private var bottomBar: BottomNavigationView? = null
-
     private var rviCompetitions: RecyclerView? = null
     private var countryName: String? = null
-    private val retrofit = ConnectionManager.getInstance().getRetrofit()
+    private val retrofit = CovidAPIConnectionManager.getInstance().getRetrofit()
     private var loadingDialog: LoadingDialog? = null
-
-    private val displayList: ArrayList<PremiumSingleCountryData> = ArrayList()
-    private val countriesInfoList = removeEmptyCountries()
+    private val displayList: ArrayList<CountryEntity> = ArrayList()
+    private var countryEntityList: ArrayList<CountryEntity> = ArrayList()
+    private var countryDAO: CountryDAO? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_countries_info)
+
+        //Llamando al RV del fragment
+        rviCompetitions = findViewById(R.id.rviCountriesInfo)
+
+        countryDAO = AppDatabase.getInstance(this).countryDAO
+        lifecycleScope.launch {
+            countryEntityList = removeEmptyCountries(ArrayList(countryDAO!!.getAllCountries()))
+            Log.i("CountryEntityList", countryEntityList.toString())
+
+            loadingDialog = LoadingDialog(this@CountriesInfoActivity)
+            displayList.addAll(countryEntityList)
+
+            val countriesRVAdapter = CountriesInfoRVAdapter(displayList, this@CountriesInfoActivity, this@CountriesInfoActivity)
+            rviCompetitions!!.adapter = countriesRVAdapter
+        }
 
         title = findViewById(R.id.tviCountriesInfoTitle)
 
@@ -75,26 +90,18 @@ class CountriesInfoActivity: AppCompatActivity(), OnCountryInfoItemClickListener
             }
         }
 
-        val countriesInfoList = removeEmptyCountries()
-        loadingDialog = LoadingDialog(this)
-        displayList.addAll(countriesInfoList)
-
-        //Llamando al RV del fragment
-        rviCompetitions = findViewById(R.id.rviCountriesInfo)
-
-        val countriesRVAdapter = CountriesInfoRVAdapter(displayList, this, this)
-        rviCompetitions!!.adapter = countriesRVAdapter
     }
 
     // Devuelve una lista sin paises con 0 casos
-    private fun removeEmptyCountries(): ArrayList<PremiumSingleCountryData> {
-        val countries = PremiumGlobalDataInfo.premiumCountriesData
-        for (i in 1..190) {
-            if (countries!![i-1].TotalCases.toInt() == 0) {
-                countries.removeAt(i-1)
+    private fun removeEmptyCountries(countries: ArrayList<CountryEntity>): ArrayList<CountryEntity> {
+
+        val validCountries: ArrayList<CountryEntity> = ArrayList()
+        countries.forEach {
+            if (it.TotalCases.toInt() > 0) {
+                validCountries.add(it)
             }
         }
-        return countries!!
+        return validCountries
     }
 
     // Se solicita la informacion historica del pais seleccionado
@@ -106,22 +113,9 @@ class CountriesInfoActivity: AppCompatActivity(), OnCountryInfoItemClickListener
             if (call.isSuccessful) {
                 SingleCountryHistoricalStats.countryHistoricalData = call.body()
                 loadingDialog!!.isDismiss()
-                startActivity(Intent(this@CountriesInfoActivity,SingleCountryActivity::class.java))
+                startActivity(Intent(this@CountriesInfoActivity, SingleCountryActivity::class.java))
                 Log.i("RequestHeaders", call.raw().toString())
             }
-        }
-    }
-
-    override fun onClick(country: PremiumSingleCountryData) {
-        //Actualizando el Singleton con la info del pais seleccionado
-        PremiumSingleCountryStats.country = country
-        // Para obtener el nombre del pais en minusculas y sin espacios
-        countryName = country.Country.replace(" ", "-").lowercase()
-
-        if (InternetConnection.isConnected) {
-            searchSingleCountryHistoricalData()
-        } else {
-            startActivity(Intent(this,SingleCountryActivity::class.java))
         }
     }
 
@@ -143,7 +137,7 @@ class CountriesInfoActivity: AppCompatActivity(), OnCountryInfoItemClickListener
                 if (newText!!.isNotEmpty()) {
                     displayList.clear()
                     val search = newText.lowercase(Locale.getDefault())
-                    countriesInfoList.forEach {
+                    countryEntityList.forEach {
                         // Si la busqueda coincide con el nombre de algun pais
                         if (it.Country.lowercase(Locale.getDefault()).contains(search)) {
                             displayList.add(it)
@@ -153,13 +147,29 @@ class CountriesInfoActivity: AppCompatActivity(), OnCountryInfoItemClickListener
 
                 } else {
                     displayList.clear()
-                    displayList.addAll(countriesInfoList)
+                    displayList.addAll(countryEntityList)
                     rviCompetitions!!.adapter!!.notifyDataSetChanged()
                 }
                 return true
             }
         })
         return super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onClick(country: CountryEntity) {
+        //Actualizando el Singleton con la info del pais seleccionado
+        PremiumSingleCountryStats.country = country
+
+        //intentSingleCountry!!.putExtra("PremiumSingleCountryData", country)
+
+        // Para obtener el nombre del pais en minusculas y sin espacios
+        countryName = country.Country.replace(" ", "-").lowercase()
+
+        if (InternetConnection.isConnected) {
+            searchSingleCountryHistoricalData()
+        } else {
+            startActivity(Intent(this, SingleCountryActivity::class.java))
+        }
     }
 
 }

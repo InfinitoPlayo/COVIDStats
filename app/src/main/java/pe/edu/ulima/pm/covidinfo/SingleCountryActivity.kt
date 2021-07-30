@@ -3,6 +3,7 @@ package pe.edu.ulima.pm.covidinfo
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
@@ -107,7 +108,6 @@ class SingleCountryActivity: AppCompatActivity() {
                     // Abrir SingleCountryPiechartFragment
                     ft.replace(R.id.flaSingleCountry, fragments[0])
                     tviTitle!!.text = "Stats for ${PremiumSingleCountryStats.country!!.Country}"
-
                 }
                 R.id.mnuGraph -> {
                     // Abrir SingleCountryTotalGraphFragment

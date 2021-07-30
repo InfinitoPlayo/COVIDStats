@@ -12,11 +12,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 import pe.edu.ulima.pm.covidinfo.adapters.CountriesRankRVAdapter
 import pe.edu.ulima.pm.covidinfo.adapters.OnCountryRankItemClickListener
-import pe.edu.ulima.pm.covidinfo.managers.ConnectionManager
+import pe.edu.ulima.pm.covidinfo.managers.CovidAPIConnectionManager
+import pe.edu.ulima.pm.covidinfo.models.AppDatabase
 import pe.edu.ulima.pm.covidinfo.models.dao.CovidAPIService
-import pe.edu.ulima.pm.covidinfo.models.dao.PremiumSingleCountryData
+import pe.edu.ulima.pm.covidinfo.models.persistence.dao.CountryDAO
+import pe.edu.ulima.pm.covidinfo.models.persistence.entities.CountryEntity
 import pe.edu.ulima.pm.covidinfo.objects.InternetConnection
-import pe.edu.ulima.pm.covidinfo.objects.PremiumGlobalDataInfo
 import pe.edu.ulima.pm.covidinfo.objects.PremiumSingleCountryStats
 import pe.edu.ulima.pm.covidinfo.objects.SingleCountryHistoricalStats
 import java.util.*
@@ -28,14 +29,30 @@ class CountriesRankActivity: AppCompatActivity(), OnCountryRankItemClickListener
     private var bottomBar: BottomNavigationView? = null
     private var rviCompetitions: RecyclerView? = null
     private var countryName: String? = null
-    private val retrofit = ConnectionManager.getInstance().getRetrofit()
+    private val retrofit = CovidAPIConnectionManager.getInstance().getRetrofit()
     private var loadingDialog: LoadingDialog? = null
-    private val displayList: ArrayList<PremiumSingleCountryData> = ArrayList()
-    private var countriesRankList: ArrayList<PremiumSingleCountryData> = ArrayList()
+    private val displayList: ArrayList<CountryEntity> = ArrayList()
+
+    private var countryEntityList: ArrayList<CountryEntity> = ArrayList()
+    private var countryDAO: CountryDAO? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_countries_rank)
+
+        //Llamando al RV del fragment
+        rviCompetitions = findViewById(R.id.rviCountriesRank)
+
+        countryDAO = AppDatabase.getInstance(this).countryDAO
+        lifecycleScope.launch {
+            countryEntityList = orderCountriesByTotalCases(ArrayList(countryDAO!!.getAllCountries()))
+
+            loadingDialog = LoadingDialog(this@CountriesRankActivity)
+            displayList.addAll(countryEntityList)
+
+            val countriesRVAdapter = CountriesRankRVAdapter(displayList, this@CountriesRankActivity, this@CountriesRankActivity)
+            rviCompetitions!!.adapter = countriesRVAdapter
+        }
 
         //Seteando el toolbar
         toolbar = findViewById(R.id.tbaMain)
@@ -53,28 +70,18 @@ class CountriesRankActivity: AppCompatActivity(), OnCountryRankItemClickListener
                 }
                 //Click en el icono de lista de paises
                 R.id.ic_countries -> {
-                    val intent = Intent(this, CountriesInfoActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this, CountriesInfoActivity::class.java))
                 }
                 //Click en el icono de ranking de paises
                 R.id.ic_ranking -> {
-                    val intent = Intent(this, CountriesRankActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this, CountriesRankActivity::class.java))
                 }
                 //Click en el icono de favoritos
                 R.id.ic_favorites -> {
-                    val intent = Intent(this, FavoriteCountriesActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this, FavoriteCountriesActivity::class.java))
                 }
             }
         }
-
-        countriesRankList = orderCountriesByTotalCases(PremiumGlobalDataInfo.premiumCountriesData!!)
-        loadingDialog = LoadingDialog(this)
-        displayList.addAll(countriesRankList)
-
-        //Llamando al RV del fragment
-        rviCompetitions = findViewById(R.id.rviCountriesRank)
 
         val countriesRVAdapter = CountriesRankRVAdapter(displayList, this, this)
         rviCompetitions!!.adapter = countriesRVAdapter
@@ -82,10 +89,10 @@ class CountriesRankActivity: AppCompatActivity(), OnCountryRankItemClickListener
     }
 
     // Se ordena la lista de paises de acuerdo a los casos por millon
-    private fun orderCountriesByTotalCases(countries: ArrayList<PremiumSingleCountryData>): ArrayList<PremiumSingleCountryData>{
+    private fun orderCountriesByTotalCases(countries: ArrayList<CountryEntity>): ArrayList<CountryEntity>{
 
         val cases: ArrayList<Double> = ArrayList()
-        val orderedCountries: ArrayList<PremiumSingleCountryData> = ArrayList()
+        val orderedCountries: ArrayList<CountryEntity> = ArrayList()
 
         for (i in 1..countries.size) {
             cases.add(countries[i-1].TotalCasesPerMillion)
@@ -112,25 +119,10 @@ class CountriesRankActivity: AppCompatActivity(), OnCountryRankItemClickListener
 
             if (call.isSuccessful) {
                 SingleCountryHistoricalStats.countryHistoricalData = call.body()
-                startActivity(Intent(this@CountriesRankActivity,SingleCountryActivity::class.java))
+                startActivity(Intent(this@CountriesRankActivity, SingleCountryActivity::class.java))
                 loadingDialog!!.isDismiss()
                 Log.i("RequestHeaders", call.raw().toString())
             }
-        }
-    }
-
-    //Cuando se hace click en un pais
-    override fun onClick(country: PremiumSingleCountryData) {
-
-        //Actualizando el Singleton con la info del pais seleccionado
-        PremiumSingleCountryStats.country = country
-        //Para obtener el slug
-        countryName = country.Country.replace(" ", "-").lowercase()
-
-        if (InternetConnection.isConnected) {
-            searchSingleCountryHistoricalData()
-        } else {
-            startActivity(Intent(this,SingleCountryActivity::class.java))
         }
     }
 
@@ -152,7 +144,7 @@ class CountriesRankActivity: AppCompatActivity(), OnCountryRankItemClickListener
                 if (newText!!.isNotEmpty()) {
                     displayList.clear()
                     val search = newText.lowercase(Locale.getDefault())
-                    countriesRankList.forEach {
+                    countryEntityList.forEach {
                         // Si la busqueda coincide con el nombre de algun pais
                         if (it.Country.lowercase(Locale.getDefault()).contains(search)) {
                             displayList.add(it)
@@ -162,13 +154,27 @@ class CountriesRankActivity: AppCompatActivity(), OnCountryRankItemClickListener
 
                 } else {
                     displayList.clear()
-                    displayList.addAll(countriesRankList)
+                    displayList.addAll(countryEntityList)
                     rviCompetitions!!.adapter!!.notifyDataSetChanged()
                 }
                 return true
             }
         })
         return super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onClick(country: CountryEntity) {
+        //Actualizando el Singleton con la info del pais seleccionado
+        PremiumSingleCountryStats.country = country
+
+        //Para obtener el slug
+        countryName = country.Country.replace(" ", "-").lowercase()
+
+        if (InternetConnection.isConnected) {
+            searchSingleCountryHistoricalData()
+        } else {
+            startActivity(Intent(this,SingleCountryActivity::class.java))
+        }
     }
 
 }

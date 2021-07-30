@@ -20,4 +20,9 @@ interface FavoriteDAO {
     @Transaction
     @Query("SELECT * FROM FavoriteEntity WHERE ID = :ID")
     suspend fun getSingleFavorite(ID: String): FavoriteEntity
+
+    //Query para buscar un pais especifico
+    @Transaction
+    @Query("SELECT * FROM FavoriteEntity WHERE Country = :country")
+    suspend fun getFavoritesWithSameName(country: String): List<FavoriteEntity>
 }
