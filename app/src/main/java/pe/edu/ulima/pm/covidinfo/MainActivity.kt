@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -21,22 +22,18 @@ import pe.edu.ulima.pm.covidinfo.managers.CovidAPIConnectionManager
 import pe.edu.ulima.pm.covidinfo.managers.IPAPIConnectionManager
 import pe.edu.ulima.pm.covidinfo.models.AppDatabase
 import pe.edu.ulima.pm.covidinfo.models.dao.*
-import pe.edu.ulima.pm.covidinfo.models.dao.PremiumGlobalData
-import pe.edu.ulima.pm.covidinfo.models.dao.PremiumSingleCountryData
 import pe.edu.ulima.pm.covidinfo.models.persistence.dao.CountryDAO
 import pe.edu.ulima.pm.covidinfo.models.persistence.dao.DateDAO
 import pe.edu.ulima.pm.covidinfo.models.persistence.dao.FavoriteDAO
 import pe.edu.ulima.pm.covidinfo.models.persistence.dao.GlobalDAO
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.DateEntity
 import pe.edu.ulima.pm.covidinfo.objects.*
-import java.io.Serializable
 
-class MainActivity : AppCompatActivity(), Serializable {
+class MainActivity : AppCompatActivity() {
 
     private var toolbar: androidx.appcompat.widget.Toolbar? = null
     private var fragments: ArrayList<Fragment> = ArrayList()
     private var globalData: GlobalData? = null //Datos globales de covid + lista de paises con info completa
-    private var premiumCountriesDataList: ArrayList<PremiumSingleCountryData> = ArrayList() //Lista de paises con info premium completa
     private val retrofit = CovidAPIConnectionManager.getInstance().getRetrofit()
     private val retrofit2 = IPAPIConnectionManager.getInstance().getRetrofit()
     private var bottomBar: BottomNavigationView? = null
@@ -55,12 +52,20 @@ class MainActivity : AppCompatActivity(), Serializable {
 
     private var loadingDialog: LoadingDialog? = null
 
+    private var intentSingleCountry: Intent? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        getLocationFromAPI()
+        intentSingleCountry = Intent(this, SingleCountryActivity::class.java)
+
         loadingDialog = LoadingDialog(this)
+
+        if (CovidInfoManager.getInstance().verifyAvailableNetwork(this)) {
+            intentSingleCountry!!.putExtra("IsConnected", "true")
+            getLocationFromAPI()
+        }
 
         fragments.add(LoadingFragment())
         val ft = supportFragmentManager.beginTransaction()
@@ -80,30 +85,23 @@ class MainActivity : AppCompatActivity(), Serializable {
         favoriteDAO = AppDatabase.getInstance(this).favoriteDAO
 
         //Si hay conexion a internet, se recibe data actualizada del API
-        if (CovidInfoManager.getInstance().verifyAvailableNetwork(this)) {
+        if (CovidInfoManager.getInstance().verifyAvailableNetwork(this) && FirstTime.isFirstTime == 1) {
 
+            Log.i("FirstTime", FirstTime.isFirstTime.toString())
+            FirstTime.isFirstTime = 0
             searchGlobalData()
-            searchPremiumGlobalData()
-
-            fragments.add(GlobalInfoFragment())
-            setFragments(fragments[0], fragments[1])
-
-        //Si no hay internet, se carga data de Room
+            getPremiumGlobalData()
         } else {
-            lifecycleScope.launch {
-                InternetConnection.isConnected = false
-                CovidInfoManager.getInstance().getCountriesFromRoom(this@MainActivity)
-                CovidInfoManager.getInstance().getGlobalFromRoom(this@MainActivity)
-                CovidInfoManager.getInstance().getDateFromRoom(this@MainActivity)
-                fragments.add(GlobalInfoFragment())
-
-                setFragments(fragments[0], fragments[1])
-            }
+            fragments.add(GlobalInfoFragment())
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.flaMain, fragments[1])
+            transaction.addToBackStack(null)
+            transaction.commit()
         }
 
         //Seteando el BottomNavigationView
         bottomBar = findViewById(R.id.bnvMain)
-        bottomBar!!.setOnItemReselectedListener {
+        bottomBar!!.setOnItemSelectedListener {
 
             when (it.itemId) {
                 //Click en el icono Home
@@ -123,12 +121,12 @@ class MainActivity : AppCompatActivity(), Serializable {
                     startActivity(Intent(this, FavoriteCountriesActivity::class.java))
                 }
             }
+            true
         }
 
         //Seteando el toolbar
         toolbar = findViewById(R.id.tbaMain)
         setSupportActionBar(toolbar)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -161,33 +159,26 @@ class MainActivity : AppCompatActivity(), Serializable {
     }
 
     // Obtener datos de https://api.covid19api.com/premium/summary
-    private fun searchPremiumGlobalData() {
+    private fun getPremiumGlobalData() {
 
         lifecycleScope.launch {
             val call = retrofit.create(CovidAPIService::class.java).getPremiumGlobalData("/premium/summary")
 
             // Si se devuelve data
             if (call.isSuccessful) {
-                PremiumGlobalDataInfo.premiumGlobalData = call.body()
+                //PremiumGlobalDataInfo.premiumGlobalData = call.body()
                 Log.i("MainActivity", call.raw().toString())
 
-                setPremiumCountriesData(PremiumGlobalDataInfo.premiumGlobalData!!)
-                PremiumGlobalDataInfo.premiumCountriesData = premiumCountriesDataList
-
                 //Insertar los paises en la BD
-                PremiumGlobalDataInfo.premiumCountriesData!!.forEach {
-                    val country = CovidInfoManager.getInstance().setCountryEntity(it)
-                    countryDAO!!.insertCountry(country)
+                call.body()!!.Countries.forEach {
+                    countryDAO!!.insertCountry(it)
                 }
-
-                //Eliminar paises desactualizados
                 removeOutdatedCountries(this@MainActivity)
 
                 //Insertar la fecha de actualizacion en la BD
-                val date = DateEntity(0, PremiumGlobalDataInfo.premiumGlobalData!!.Date)
-                dateDAO!!.insertDate(date)
+                dateDAO!!.insertDate(DateEntity(0, call.body()!!.Date))
 
-                //
+                // Obtener datos del pais del usuario
                 PremiumSingleCountryStats.country = countryDAO!!.getSingleCountry(location!!)
 
                 //Iniciar el fragment GlobalInfoFragment
@@ -219,26 +210,6 @@ class MainActivity : AppCompatActivity(), Serializable {
         }
     }
 
-    private fun setPremiumCountriesData(premiumGlobalData: PremiumGlobalData) {
-        for (i in premiumGlobalData.Countries) {
-            premiumCountriesDataList.add(i)
-        }
-    }
-
-    private fun setFragments(f0: Fragment, f1: Fragment) {
-
-        val ft = supportFragmentManager.beginTransaction()
-        if (FirstTime.isFirstTime == 1) {
-            ft.replace(R.id.flaMain, f0)
-            FirstTime.isFirstTime = 2
-        }
-        else {
-            ft.replace(R.id.flaMain, f1)
-        }
-        ft.addToBackStack(null)
-        ft.commit()
-    }
-
     private suspend fun removeOutdatedCountries(context: Context) {
 
         val countryDAO = AppDatabase.getInstance(context).countryDAO
@@ -260,24 +231,26 @@ class MainActivity : AppCompatActivity(), Serializable {
         nvi.setNavigationItemSelectedListener { item: MenuItem ->
 
             item.isChecked = true
-            val ft = supportFragmentManager.beginTransaction()
 
             when (item.itemId) {
                 R.id.mnuGlobalInfo -> {
                     // Abrir SingleCountryPieChartFragment
+                    val ft = supportFragmentManager.beginTransaction()
                     ft.replace(R.id.flaMain, fragments[1])
                     ft.addToBackStack(null)
                     ft.commit()
                 }
                 R.id.mnuMyCountry -> {
                     // Abrir SingleCountryTotalPieChartFragment
+                    if (location.isNullOrBlank()){
+                        Toast.makeText(this, "Internet connection is needed to display your location", Toast.LENGTH_SHORT).show()
+                    } else {
                     searchSingleCountryHistoricalData()
+                    }
                 }
-
             }
             true
         }
-
     }
 
     // Se solicita la informacion historica del pais
@@ -289,7 +262,7 @@ class MainActivity : AppCompatActivity(), Serializable {
             if (call.isSuccessful) {
                 SingleCountryHistoricalStats.countryHistoricalData = call.body()
                 loadingDialog!!.isDismiss()
-                startActivity(Intent(this@MainActivity, SingleCountryActivity::class.java))
+                startActivity(intentSingleCountry)
                 Log.i("RequestHeaders", call.raw().toString())
             }
         }

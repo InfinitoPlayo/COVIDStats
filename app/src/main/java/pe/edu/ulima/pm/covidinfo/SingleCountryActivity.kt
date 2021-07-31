@@ -3,7 +3,6 @@ package pe.edu.ulima.pm.covidinfo
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
@@ -15,8 +14,9 @@ import com.google.android.material.navigation.NavigationView
 import pe.edu.ulima.pm.covidinfo.fragments.SingleCountryActiveGraphFragment
 import pe.edu.ulima.pm.covidinfo.fragments.SingleCountryTotalGraphFragment
 import pe.edu.ulima.pm.covidinfo.fragments.SingleCountryPiechartFragment
+import pe.edu.ulima.pm.covidinfo.managers.CovidInfoManager
+import pe.edu.ulima.pm.covidinfo.objects.InternetConnection
 import pe.edu.ulima.pm.covidinfo.objects.PremiumSingleCountryStats
-import pe.edu.ulima.pm.covidinfo.objects.Test
 
 class SingleCountryActivity: AppCompatActivity() {
 
@@ -53,6 +53,10 @@ class SingleCountryActivity: AppCompatActivity() {
         dlaSingleCountry =findViewById(R.id.dlaSingleCountry)
         setNavigationView(nviSingleCountry!!)
 
+        if (CovidInfoManager.getInstance().verifyAvailableNetwork(this)) {
+            InternetConnection.isConnected
+        }
+
         val ft = supportFragmentManager.beginTransaction()
         ft.replace(R.id.flaSingleCountry, fragments[0])
         ft.addToBackStack(null)
@@ -67,7 +71,7 @@ class SingleCountryActivity: AppCompatActivity() {
 
     private fun setBottomNavigationView (bottomBar: BottomNavigationView) {
 
-        bottomBar.setOnItemReselectedListener {
+        bottomBar.setOnItemSelectedListener {
 
             when (it.itemId) {
                 //Click en el icono Home
@@ -91,6 +95,7 @@ class SingleCountryActivity: AppCompatActivity() {
                     startActivity(intent)
                 }
             }
+            true
         }
     }
 
@@ -99,7 +104,6 @@ class SingleCountryActivity: AppCompatActivity() {
 
         //Se configura un listener en la barra de navegacion para que cambie de Fragment segun se solicite
         nvi.setNavigationItemSelectedListener { item: MenuItem ->
-            Test.isFirstTime = 1
             item.isChecked = true
             val ft = supportFragmentManager.beginTransaction()
 

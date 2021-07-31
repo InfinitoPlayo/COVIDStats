@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import pe.edu.ulima.pm.covidinfo.adapters.CountriesInfoRVAdapter
 import pe.edu.ulima.pm.covidinfo.adapters.OnCountryInfoItemClickListener
 import pe.edu.ulima.pm.covidinfo.managers.CovidAPIConnectionManager
+import pe.edu.ulima.pm.covidinfo.managers.CovidInfoManager
 import pe.edu.ulima.pm.covidinfo.models.AppDatabase
 import pe.edu.ulima.pm.covidinfo.models.dao.CovidAPIService
 import pe.edu.ulima.pm.covidinfo.models.persistence.dao.CountryDAO
@@ -36,6 +37,8 @@ class CountriesInfoActivity: AppCompatActivity(), OnCountryInfoItemClickListener
     private val displayList: ArrayList<CountryEntity> = ArrayList()
     private var countryEntityList: ArrayList<CountryEntity> = ArrayList()
     private var countryDAO: CountryDAO? = null
+
+    private var intentSingleCountry: Intent? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,9 +65,11 @@ class CountriesInfoActivity: AppCompatActivity(), OnCountryInfoItemClickListener
         toolbar = findViewById(R.id.tbaCountriesInfo)
         setSupportActionBar(toolbar)
 
+        intentSingleCountry = Intent(this, SingleCountryActivity::class.java)
+
         //Seteando el BottomNavigationView
         bottomBar = findViewById(R.id.bnvCountriesInfo)
-        bottomBar!!.setOnItemReselectedListener {
+        bottomBar!!.setOnItemSelectedListener {
 
             when (it.itemId) {
                 //Click en el icono Home
@@ -88,6 +93,7 @@ class CountriesInfoActivity: AppCompatActivity(), OnCountryInfoItemClickListener
                     startActivity(intent)
                 }
             }
+            true
         }
 
     }
@@ -113,7 +119,7 @@ class CountriesInfoActivity: AppCompatActivity(), OnCountryInfoItemClickListener
             if (call.isSuccessful) {
                 SingleCountryHistoricalStats.countryHistoricalData = call.body()
                 loadingDialog!!.isDismiss()
-                startActivity(Intent(this@CountriesInfoActivity, SingleCountryActivity::class.java))
+                startActivity(intentSingleCountry)
                 Log.i("RequestHeaders", call.raw().toString())
             }
         }
@@ -160,15 +166,15 @@ class CountriesInfoActivity: AppCompatActivity(), OnCountryInfoItemClickListener
         //Actualizando el Singleton con la info del pais seleccionado
         PremiumSingleCountryStats.country = country
 
-        //intentSingleCountry!!.putExtra("PremiumSingleCountryData", country)
-
         // Para obtener el nombre del pais en minusculas y sin espacios
         countryName = country.Country.replace(" ", "-").lowercase()
 
-        if (InternetConnection.isConnected) {
+        if (CovidInfoManager.getInstance().verifyAvailableNetwork(this)) {
+            intentSingleCountry!!.putExtra("IsConnected", "true")
             searchSingleCountryHistoricalData()
         } else {
-            startActivity(Intent(this, SingleCountryActivity::class.java))
+            intentSingleCountry!!.putExtra("IsConnected", "false")
+            startActivity(intentSingleCountry)
         }
     }
 

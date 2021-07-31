@@ -1,5 +1,6 @@
 package pe.edu.ulima.pm.covidinfo.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -37,7 +38,7 @@ class SingleCountryActiveGraphFragment: Fragment() {
         tviNewChartInfo = view.findViewById(R.id.tviNewChartInfo)
 
         //Si hay internet
-        if (InternetConnection.isConnected) {
+        if (requireActivity().intent.getStringExtra("IsConnected") == "true") {
             getLastTwentyItems()
 
             lineChart = view.findViewById(R.id.newLineChart)

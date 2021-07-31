@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import pe.edu.ulima.pm.covidinfo.adapters.CountriesRankRVAdapter
 import pe.edu.ulima.pm.covidinfo.adapters.OnCountryRankItemClickListener
 import pe.edu.ulima.pm.covidinfo.managers.CovidAPIConnectionManager
+import pe.edu.ulima.pm.covidinfo.managers.CovidInfoManager
 import pe.edu.ulima.pm.covidinfo.models.AppDatabase
 import pe.edu.ulima.pm.covidinfo.models.dao.CovidAPIService
 import pe.edu.ulima.pm.covidinfo.models.persistence.dao.CountryDAO
@@ -36,6 +37,8 @@ class CountriesRankActivity: AppCompatActivity(), OnCountryRankItemClickListener
     private var countryEntityList: ArrayList<CountryEntity> = ArrayList()
     private var countryDAO: CountryDAO? = null
 
+    private var intentSingleCountry: Intent? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_countries_rank)
@@ -54,13 +57,15 @@ class CountriesRankActivity: AppCompatActivity(), OnCountryRankItemClickListener
             rviCompetitions!!.adapter = countriesRVAdapter
         }
 
+        intentSingleCountry = Intent(this, SingleCountryActivity::class.java)
+
         //Seteando el toolbar
         toolbar = findViewById(R.id.tbaMain)
         setSupportActionBar(toolbar)
 
         //Seteando el BottomNavigationView
         bottomBar = findViewById(R.id.bnvCountriesRank)
-        bottomBar!!.setOnItemReselectedListener {
+        bottomBar!!.setOnItemSelectedListener {
 
             when (it.itemId) {
                 //Click en el icono Home
@@ -81,6 +86,7 @@ class CountriesRankActivity: AppCompatActivity(), OnCountryRankItemClickListener
                     startActivity(Intent(this, FavoriteCountriesActivity::class.java))
                 }
             }
+            true
         }
 
         val countriesRVAdapter = CountriesRankRVAdapter(displayList, this, this)
@@ -119,7 +125,7 @@ class CountriesRankActivity: AppCompatActivity(), OnCountryRankItemClickListener
 
             if (call.isSuccessful) {
                 SingleCountryHistoricalStats.countryHistoricalData = call.body()
-                startActivity(Intent(this@CountriesRankActivity, SingleCountryActivity::class.java))
+                startActivity(intentSingleCountry)
                 loadingDialog!!.isDismiss()
                 Log.i("RequestHeaders", call.raw().toString())
             }
@@ -170,10 +176,11 @@ class CountriesRankActivity: AppCompatActivity(), OnCountryRankItemClickListener
         //Para obtener el slug
         countryName = country.Country.replace(" ", "-").lowercase()
 
-        if (InternetConnection.isConnected) {
+        if (CovidInfoManager.getInstance().verifyAvailableNetwork(this)) {
+            intentSingleCountry!!.putExtra("IsConnected", "true")
             searchSingleCountryHistoricalData()
         } else {
-            startActivity(Intent(this,SingleCountryActivity::class.java))
+            startActivity(intentSingleCountry)
         }
     }
 

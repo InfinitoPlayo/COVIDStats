@@ -6,12 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import kotlinx.android.synthetic.main.fragment_global_info_piechart.*
 import pe.edu.ulima.pm.covidinfo.R
+import pe.edu.ulima.pm.covidinfo.SingleCountryActivity
+import pe.edu.ulima.pm.covidinfo.managers.CovidInfoManager
 import pe.edu.ulima.pm.covidinfo.models.dao.CountryHistoricalData
 import pe.edu.ulima.pm.covidinfo.objects.InternetConnection
 import pe.edu.ulima.pm.covidinfo.objects.SingleCountryHistoricalStats
@@ -38,7 +42,7 @@ class SingleCountryTotalGraphFragment: Fragment() {
         tviChartInfo = view.findViewById(R.id.tviChartInfo)
 
         //Si hay internet
-        if (InternetConnection.isConnected) {
+        if (requireActivity().intent.getStringExtra("IsConnected") == "true") {
             getLastTwentyItems()
 
             lineChart = view.findViewById(R.id.lineChart)

@@ -27,4 +27,4 @@ data class PremiumSingleCountryData(
     val IncidenceRiskNewConfirmedPerHundredThousand: Double,
     val IncidenceRiskNewDeathsPerHundredThousand: Double,
     val CaseFatalityRatio: Double
-) : Serializable
+)

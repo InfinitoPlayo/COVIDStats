@@ -16,7 +16,7 @@ class FavoriteCountriesActivity: AppCompatActivity() {
 
         //Seteando el BottomNavigationView
         bottomBar = findViewById(R.id.bnvFavoriteCountries)
-        bottomBar!!.setOnItemReselectedListener {
+        bottomBar!!.setOnItemSelectedListener {
 
             when (it.itemId) {
                 //Click en el icono Home
@@ -40,6 +40,7 @@ class FavoriteCountriesActivity: AppCompatActivity() {
                     startActivity(intent)
                 }
             }
+            true
         }
 
         val ft = supportFragmentManager.beginTransaction()

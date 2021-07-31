@@ -5,5 +5,4 @@ import pe.edu.ulima.pm.covidinfo.models.dao.GlobalData
 
 object GlobalDataInfo {
     var globalData: GlobalData? = null
-    //var countriesData: ArrayList<SingleCountryData>? = null
 }
