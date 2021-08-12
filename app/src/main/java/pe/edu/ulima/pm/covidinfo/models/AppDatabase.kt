@@ -4,8 +4,6 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 import pe.edu.ulima.pm.covidinfo.models.persistence.dao.CountryDAO
 import pe.edu.ulima.pm.covidinfo.models.persistence.dao.DateDAO
 import pe.edu.ulima.pm.covidinfo.models.persistence.dao.FavoriteDAO
@@ -32,7 +30,7 @@ abstract class AppDatabase: RoomDatabase () {
 
         //Instancia unica de la BD
         fun getInstance(context: Context): AppDatabase {
-            synchronized(this){
+            synchronized(this) {
                 return INSTANCE ?: Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "CovidInfo_db")
                     .build().also {
                         INSTANCE = it

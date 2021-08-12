@@ -21,7 +21,6 @@ import kotlinx.coroutines.launch
 import pe.edu.ulima.pm.covidinfo.R
 import pe.edu.ulima.pm.covidinfo.managers.CovidInfoManager
 import pe.edu.ulima.pm.covidinfo.models.AppDatabase
-import pe.edu.ulima.pm.covidinfo.models.dao.PremiumSingleCountryData
 import pe.edu.ulima.pm.covidinfo.models.persistence.dao.FavoriteDAO
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.CountryEntity
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.FavoriteEntity
@@ -31,7 +30,6 @@ import java.text.DecimalFormat
 class SingleCountryPiechartFragment: Fragment() {
 
     private lateinit var tviDateCountry: TextView
-
     private lateinit var tviTotalConfirmedCountry: TextView
     private lateinit var tviTotalDeathsCountry: TextView
     private lateinit var tviMortalityRatioCountry: TextView
@@ -61,8 +59,6 @@ class SingleCountryPiechartFragment: Fragment() {
     private lateinit var emptyStar: Drawable
     private lateinit var coloredStar: Drawable
 
-    //private var country: PremiumSingleCountryData? = null
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -75,11 +71,8 @@ class SingleCountryPiechartFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //Se obtiene la lista de paises de MainActivity
-        //country = requireActivity().intent.getSerializableExtra("PremiumSingleCountryData") as PremiumSingleCountryData
-
-        pchSingleCountry = view.findViewById(R.id.pchSingleCountry)
         favoriteDAO = AppDatabase.getInstance(view.context).favoriteDAO
+        pchSingleCountry = view.findViewById(R.id.pchSingleCountry)
         butAddFavorite = view.findViewById(R.id.butAddFavorite)
         emptyStar = ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_star_border_24)!!
         coloredStar = ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_star_yellow_24)!!
@@ -117,21 +110,18 @@ class SingleCountryPiechartFragment: Fragment() {
         tviTotalDeathsPerMillion.text = df.format(String.format("%.2f", sc?.TotalDeathsPerMillion).toDouble())
         tviTotalCasesPer100k.text = df.format(String.format("%.2f", sc?.IncidenceRiskConfirmedPerHundredThousand).toDouble())
         tviTotalDeathsPer100k.text = df.format(String.format("%.2f", sc?.IncidenceRiskDeathsPerHundredThousand).toDouble())
-
         tviNewConfirmedCountry.text = sc?.NewCases.toString()
         tviNewDeathsCountry.text = sc?.NewDeaths.toString()
-
-        if(sc!!.NewCases.toInt() != 0) {
-            tviNewMortalityRatioCountry.text = String.format("%.2f", sc!!.NewDeaths.toDouble()*100.0 / (sc!!.NewCases.toDouble()+1.0)) + "%"
-        } else {
-            tviNewMortalityRatioCountry.text = "-"
-        }
-
         tviNewCasesPerMillion.text = df.format(String.format("%.2f", sc?.NewCasesPerMillion).toDouble())
         tviNewDeathsPerMillion.text = df.format(String.format("%.2f", sc?.NewDeathsPerMillion).toDouble())
         tviNewCasesPer100k.text = df.format(String.format("%.2f", sc?.IncidenceRiskNewConfirmedPerHundredThousand).toDouble())
         tviNewDeathsPer100k.text = df.format(String.format("%.2f", sc?.IncidenceRiskNewDeathsPerHundredThousand).toDouble())
+        if (sc!!.NewCases.toInt() != 0)
+            tviNewMortalityRatioCountry.text = String.format("%.2f", sc!!.NewDeaths.toDouble()*100.0 / (sc!!.NewCases.toDouble()+1.0)) + "%"
+        else
+            tviNewMortalityRatioCountry.text = "-"
 
+        //Al hacer click en el boton de favorito, se anade o elimina de los favoritos
         butAddFavorite!!.setOnClickListener {
 
             val favoriteEntity: FavoriteEntity = CovidInfoManager.getInstance().setFavoriteEntity(PremiumSingleCountryStats.country!!)
@@ -152,7 +142,6 @@ class SingleCountryPiechartFragment: Fragment() {
                 }
             }
         }
-
     }
 
     //Configurar el PieChart
@@ -166,7 +155,7 @@ class SingleCountryPiechartFragment: Fragment() {
 
         pieDataSet.colors = colors
         pieData.setValueTextSize(10f)
-        pchSingleCountry.animateXY(1500,1500)
+        pchSingleCountry.animateXY(1000,1000)
         pchSingleCountry.data = pieData
         pchSingleCountry.description.text=""
         pchSingleCountry.setHoleColor(ContextCompat.getColor(requireContext(), R.color.lightblue))
@@ -177,7 +166,7 @@ class SingleCountryPiechartFragment: Fragment() {
     private fun getList() : Array<PieEntry?> {
 
         dataList[0] = PieEntry(sc!!.TotalCasesPerMillion.toFloat(), "Cases/million")
-        dataList[1] = PieEntry(sc!!.TotalDeathsPerMillion.toFloat(), "Deaths/Million")
+        dataList[1] = PieEntry(sc!!.TotalDeathsPerMillion.toFloat(), "Deaths/million")
 
         return dataList
     }
@@ -185,11 +174,7 @@ class SingleCountryPiechartFragment: Fragment() {
     private suspend fun isFavorite(country: CountryEntity) {
 
         favoriteDAO = AppDatabase.getInstance(requireContext()).favoriteDAO
-
-        Log.i("SingleCountryPieChart", country.ID)
         val query = favoriteDAO?.getSingleFavorite(country.ID)
-        Log.i("SingleCountryPieChart", query.toString())
-
 
         if (query == null) {
             butAddFavorite!!.background = emptyStar

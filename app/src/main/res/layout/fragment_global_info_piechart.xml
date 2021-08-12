@@ -43,7 +43,6 @@
             android:background="@drawable/background_cardview">
 
             <TextView
-                android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -102,7 +101,6 @@
             android:background="@drawable/background_cardview">
 
             <TextView
-                android:id="@+id/tvi2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"

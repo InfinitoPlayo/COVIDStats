@@ -1,7 +1,5 @@
 package pe.edu.ulima.pm.covidinfo.models.dao
 
-import java.io.Serializable
-
 // Data class para poder mostrar los casos por país
 data class SingleCountryData(
     val ID: String,
@@ -16,4 +14,4 @@ data class SingleCountryData(
     val NewRecovered: Long,
     val TotalRecovered: Long,
     val Date: String
-) : Serializable
+)

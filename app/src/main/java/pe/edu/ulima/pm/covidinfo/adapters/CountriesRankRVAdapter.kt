@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import pe.edu.ulima.pm.covidinfo.R
-import pe.edu.ulima.pm.covidinfo.models.dao.PremiumSingleCountryData
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.CountryEntity
 
 interface OnCountryRankItemClickListener {
@@ -53,7 +52,7 @@ class CountriesRankRVAdapter: RecyclerView.Adapter<CountriesRankRVAdapter.ViewHo
         //Se muestran los datos de la competicion en el RecyclerView
         holder.tviCountryName!!.text = country.Country
         holder.tviCountryInfo!!.text = "Cases per million: ${country.TotalCasesPerMillion}"
-        holder.tviCountryPosition!!.text = "${pos}. "
+        holder.tviCountryPosition!!.text = "${pos}."
 
         holder.itemView.setOnClickListener {
             listener!!.onClick(countries!![position])

@@ -1,13 +1,10 @@
 package pe.edu.ulima.pm.covidinfo.fragments
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
@@ -15,14 +12,13 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import pe.edu.ulima.pm.covidinfo.R
 import pe.edu.ulima.pm.covidinfo.models.dao.CountryHistoricalData
-import pe.edu.ulima.pm.covidinfo.objects.InternetConnection
 import pe.edu.ulima.pm.covidinfo.objects.SingleCountryHistoricalStats
 
 class SingleCountryActiveGraphFragment: Fragment() {
 
     private var tviNewChartInfo: TextView? = null
     private var lineChart: LineChart? = null
-    lateinit var countryList : ArrayList<Entry>
+    private lateinit var countryList : ArrayList<Entry>
     private val limitedList = arrayOfNulls<CountryHistoricalData>(21)
 
     override fun onCreateView(

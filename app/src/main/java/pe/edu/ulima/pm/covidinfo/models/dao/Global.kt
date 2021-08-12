@@ -1,7 +1,5 @@
 package pe.edu.ulima.pm.covidinfo.models.dao
 
-import java.io.Serializable
-
 // Data class para la interfaz del pie chart con los casos a nivel global
 data class Global(
     var NewConfirmed: Long,
@@ -11,4 +9,4 @@ data class Global(
     var NewRecovered: Long,
     var TotalRecovered: Long,
     var Date: String
-) : Serializable
+)

@@ -1,7 +1,5 @@
 package pe.edu.ulima.pm.covidinfo.models.dao
 
-import java.io.Serializable
-
 // Data class para obtener estadisticas premium de cada pais
 data class PremiumSingleCountryData(
     val ID: String,

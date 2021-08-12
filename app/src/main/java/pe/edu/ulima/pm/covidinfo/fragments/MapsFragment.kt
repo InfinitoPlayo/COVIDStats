@@ -7,13 +7,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import pe.edu.ulima.pm.covidinfo.R
 
-class LoadingFragment: Fragment() {
+class MapsFragment: Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_loading, container, false)
+        return inflater.inflate(R.layout.fragment_maps, container, false)
     }
 }

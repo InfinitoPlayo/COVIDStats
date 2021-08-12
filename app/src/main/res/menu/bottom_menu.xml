@@ -21,4 +21,9 @@
         android:icon="@drawable/ic_baseline_star_24"
         android:title="@string/favorites"/>
 
+    <item
+        android:id="@+id/ic_worldmap"
+        android:icon="@drawable/ic_baseline_map_24"
+        android:title="@string/maps"/>
+
 </menu>

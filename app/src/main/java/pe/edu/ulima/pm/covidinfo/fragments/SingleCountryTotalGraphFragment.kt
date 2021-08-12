@@ -1,30 +1,24 @@
 package pe.edu.ulima.pm.covidinfo.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import kotlinx.android.synthetic.main.fragment_global_info_piechart.*
 import pe.edu.ulima.pm.covidinfo.R
-import pe.edu.ulima.pm.covidinfo.SingleCountryActivity
-import pe.edu.ulima.pm.covidinfo.managers.CovidInfoManager
 import pe.edu.ulima.pm.covidinfo.models.dao.CountryHistoricalData
-import pe.edu.ulima.pm.covidinfo.objects.InternetConnection
 import pe.edu.ulima.pm.covidinfo.objects.SingleCountryHistoricalStats
 
 class SingleCountryTotalGraphFragment: Fragment() {
 
     private var tviChartInfo: TextView? = null
     private var lineChart: LineChart? = null
-    lateinit var countryList : ArrayList<Entry>
+    private lateinit var countryList : ArrayList<Entry>
     private val limitedList = arrayOfNulls<CountryHistoricalData>(21)
 
     override fun onCreateView(

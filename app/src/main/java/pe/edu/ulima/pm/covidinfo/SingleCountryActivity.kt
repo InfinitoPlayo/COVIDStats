@@ -12,8 +12,8 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import pe.edu.ulima.pm.covidinfo.fragments.SingleCountryActiveGraphFragment
-import pe.edu.ulima.pm.covidinfo.fragments.SingleCountryTotalGraphFragment
 import pe.edu.ulima.pm.covidinfo.fragments.SingleCountryPiechartFragment
+import pe.edu.ulima.pm.covidinfo.fragments.SingleCountryTotalGraphFragment
 import pe.edu.ulima.pm.covidinfo.managers.CovidInfoManager
 import pe.edu.ulima.pm.covidinfo.objects.InternetConnection
 import pe.edu.ulima.pm.covidinfo.objects.PremiumSingleCountryStats
@@ -94,6 +94,10 @@ class SingleCountryActivity: AppCompatActivity() {
                     val intent = Intent(this, FavoriteCountriesActivity::class.java)
                     startActivity(intent)
                 }
+                //Click en el icono de maps
+                R.id.ic_worldmap -> {
+                    startActivity(Intent(this, MapsActivity::class.java))
+                }
             }
             true
         }
@@ -130,7 +134,6 @@ class SingleCountryActivity: AppCompatActivity() {
             dlaSingleCountry!!.closeDrawers()
             true
         }
-
     }
 
 }

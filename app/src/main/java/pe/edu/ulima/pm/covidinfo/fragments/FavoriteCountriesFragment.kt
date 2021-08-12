@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
-import pe.edu.ulima.pm.covidinfo.LoadingDialog
+import pe.edu.ulima.pm.covidinfo.models.LoadingDialog
 import pe.edu.ulima.pm.covidinfo.R
 import pe.edu.ulima.pm.covidinfo.SingleCountryActivity
 import pe.edu.ulima.pm.covidinfo.adapters.FavoriteCountriesRVAdapter
@@ -61,8 +61,6 @@ class FavoriteCountriesFragment: Fragment(), OnFavoriteCountryItemClickListener 
             val favoriteCountriesRVAdapter = FavoriteCountriesRVAdapter(favorites, this@FavoriteCountriesFragment, view.context)
             rviFavoriteCountries!!.adapter = favoriteCountriesRVAdapter
         }
-
-
     }
 
     private fun searchSingleCountryHistoricalData() {

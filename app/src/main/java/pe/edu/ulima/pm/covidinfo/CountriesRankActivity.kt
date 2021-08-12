@@ -15,10 +15,10 @@ import pe.edu.ulima.pm.covidinfo.adapters.OnCountryRankItemClickListener
 import pe.edu.ulima.pm.covidinfo.managers.CovidAPIConnectionManager
 import pe.edu.ulima.pm.covidinfo.managers.CovidInfoManager
 import pe.edu.ulima.pm.covidinfo.models.AppDatabase
+import pe.edu.ulima.pm.covidinfo.models.LoadingDialog
 import pe.edu.ulima.pm.covidinfo.models.dao.CovidAPIService
 import pe.edu.ulima.pm.covidinfo.models.persistence.dao.CountryDAO
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.CountryEntity
-import pe.edu.ulima.pm.covidinfo.objects.InternetConnection
 import pe.edu.ulima.pm.covidinfo.objects.PremiumSingleCountryStats
 import pe.edu.ulima.pm.covidinfo.objects.SingleCountryHistoricalStats
 import java.util.*
@@ -84,6 +84,10 @@ class CountriesRankActivity: AppCompatActivity(), OnCountryRankItemClickListener
                 //Click en el icono de favoritos
                 R.id.ic_favorites -> {
                     startActivity(Intent(this, FavoriteCountriesActivity::class.java))
+                }
+                //Click en el icono de maps
+                R.id.ic_worldmap -> {
+                    startActivity(Intent(this, MapsActivity::class.java))
                 }
             }
             true

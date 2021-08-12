@@ -1,7 +1,6 @@
 package pe.edu.ulima.pm.covidinfo.models.persistence.dao
 
 import androidx.room.*
-import pe.edu.ulima.pm.covidinfo.models.persistence.entities.CountryEntity
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.FavoriteEntity
 
 @Dao

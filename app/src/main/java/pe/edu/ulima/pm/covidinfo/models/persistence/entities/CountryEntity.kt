@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-// Creamos nuestro data class de País para la persistencia a recibir de la api
+// Data class de país para la BD
 @Entity
 data class CountryEntity (
     @PrimaryKey(autoGenerate = false) var ID: String,

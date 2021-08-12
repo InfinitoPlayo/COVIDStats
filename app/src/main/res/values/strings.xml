@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">COVIDInfo</string>
     <string name="covid_global_stats">COVID Global Stats</string>
-    <string name="countries_list">Countries list</string>
     <string name="home">Home</string>
     <string name="australia">Australia</string>
     <string name="additional_info">Additional info</string>
@@ -9,13 +8,9 @@
     <string name="stats_by_country">Stats by Country</string>
     <string name="stats_for_australia">Stats for Australia</string>
     <string name="piechart">PieChart</string>
-    <string name="progress_graph">Progress graph</string>
     <string name="the_graph_is_based_in_the_last_20_covid_reports_sent">The graph is based in the last 20 COVID reports sent.</string>
     <string name="view_global_statistics">View global statistics</string>
     <string name="welcome_to_the_covid_info_app">Welcome to the COVID Info app !</string>
-    <string name="total_progress_graph">Total progress graph</string>
-    <string name="new_progress_graph">New progress graph</string>
-    <string name="new_cases_graph">New cases graph</string>
     <string name="total_cases_graph">Total cases graph</string>
     <string name="active_cases_graph">Active cases graph</string>
     <string name="internet_connection_is_needed"> Internet connection is needed to show this graph.</string>
@@ -26,17 +21,7 @@
     <string name="favorite_countries">Favorite countries</string>
     <string name="covid_info">COVID Info</string>
     <string name="search">Search</string>
-    <string name="example">Example</string>
     <string name="last_updated">Last updated:</string>
-    <string name="total_confirmed_cases">Total confirmed cases:</string>
-    <string name="total_deaths">Total deaths:</string>
-    <string name="total_recovered">Total recovered:</string>
-    <string name="total_active_cases">Total active cases:</string>
-    <string name="new_cases">New cases:</string>
-    <string name="new_recovered">New recovered:</string>
-    <string name="new_deaths">New deaths:</string>
-    <string name="total_cases">Total cases:</string>
-    <string name="title_activity_splash_screen">SplashScreenActivity</string>
     <string name="total_confirmed_cases_">Total confirmed cases</string>
     <string name="total_active_cases_">Total active cases</string>
     <string name="total_recovered_">Total recovered</string>
@@ -59,5 +44,8 @@
     <string name="total_cases_per_100k">Total cases per 100k</string>
     <string name="global_stats">Global stats</string>
     <string name="my_country">My country</string>
+    <string name="_194">194.</string>
+    <string name="world_map">World map</string>
+    <string name="maps">Maps</string>
 
 </resources>

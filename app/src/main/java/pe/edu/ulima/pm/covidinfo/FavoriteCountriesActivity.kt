@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import pe.edu.ulima.pm.covidinfo.fragments.FavoriteCountriesFragment
+import pe.edu.ulima.pm.covidinfo.managers.CovidInfoManager
+import pe.edu.ulima.pm.covidinfo.objects.InternetConnection
 
 class FavoriteCountriesActivity: AppCompatActivity() {
 
@@ -39,9 +41,15 @@ class FavoriteCountriesActivity: AppCompatActivity() {
                     val intent = Intent(this, FavoriteCountriesActivity::class.java)
                     startActivity(intent)
                 }
+                //Click en el icono de maps
+                R.id.ic_worldmap -> {
+                    startActivity(Intent(this, MapsActivity::class.java))
+                }
             }
             true
         }
+
+        InternetConnection.isConnected = CovidInfoManager.getInstance().verifyAvailableNetwork(this)
 
         val ft = supportFragmentManager.beginTransaction()
         ft.replace(R.id.flaFavoriteCountries, FavoriteCountriesFragment())

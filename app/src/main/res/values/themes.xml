@@ -19,12 +19,4 @@
         <item name="android:textColorSecondary">@color/lightgrey</item>
     </style>
 
-    <style name="Theme.COVIDInfo.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="Theme.COVIDInfo.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="Theme.COVIDInfo.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

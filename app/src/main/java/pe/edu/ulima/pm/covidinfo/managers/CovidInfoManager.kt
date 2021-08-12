@@ -8,7 +8,6 @@ import pe.edu.ulima.pm.covidinfo.models.dao.Global
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.CountryEntity
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.FavoriteEntity
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.GlobalEntity
-import pe.edu.ulima.pm.covidinfo.objects.GlobalStats
 
 class CovidInfoManager {
 
@@ -44,17 +43,6 @@ class CovidInfoManager {
         val networkInfo = connectivityManager.activeNetworkInfo
         return  networkInfo!=null && networkInfo.isConnected
     }
-
-    /*// Devuelve una lista sin paises con 0 casos
-    fun removeEmptyCountries(): ArrayList<PremiumSingleCountryData> {
-        val countries = PremiumGlobalDataInfo.premiumCountriesData
-        for (i in 1..190) {
-            if (countries!![i-1].TotalCases.toInt() == 0) {
-                countries.removeAt(i-1)
-            }
-        }
-        return countries!!
-    }*/
 
     fun setFavoriteEntity(country: CountryEntity): FavoriteEntity {
 
@@ -113,89 +101,77 @@ class CovidInfoManager {
 
     }
 
-    fun setGlobalStats(global: Global) {
-        GlobalStats.TotalDeaths = global.TotalDeaths
-        GlobalStats.TotalRecovered = global.TotalRecovered
-        GlobalStats.TotalConfirmed = global.TotalConfirmed
-        GlobalStats.Date = global.Date
-        GlobalStats.NewRecovered = global.NewRecovered
-        GlobalStats.NewDeaths = global.NewDeaths
-        GlobalStats.NewConfirmed = global.NewConfirmed
-    }
-
-    fun setFavoriteFromCountryEntity(country: CountryEntity): FavoriteEntity {
-
-        return FavoriteEntity(
-            country.ID,
-            country.CountryISO,
-            country.Country,
-            country.Continent,
-            country.Date,
-            country.TotalCases,
-            country.NewCases,
-            country.TotalDeaths,
-            country.NewDeaths,
-            country.TotalCasesPerMillion,
-            country.NewCasesPerMillion,
-            country.TotalDeathsPerMillion,
-            country.NewDeathsPerMillion,
-            country.StringencyIndex,
-            country.DailyIncidenceConfirmedCases,
-            country.DailyIncidenceConfirmedDeaths,
-            country.DailyIncidenceConfirmedCasesPerMillion,
-            country.DailyIncidenceConfirmedDeathsPerMillion,
-            country.IncidenceRiskConfirmedPerHundredThousand,
-            country.IncidenceRiskDeathsPerHundredThousand,
-            country.IncidenceRiskNewConfirmedPerHundredThousand,
-            country.IncidenceRiskNewDeathsPerHundredThousand,
-            country.CaseFatalityRatio
-        )
-    }
-
+    //Para solo mostrar paises actualizados y quitar posibles duplicados
     suspend fun updateFavorites(favorites: ArrayList<FavoriteEntity>, context: Context) {
 
-        val countryDAO = AppDatabase.getInstance(context).countryDAO
         val favoriteDAO = AppDatabase.getInstance(context).favoriteDAO
-
-        //val duplicateFavorites =favoriteDAO.getFavoritesWithSameName("New Zealand")
-        //Log.i("duplicateFavorites", duplicateFavorites.toString())
+        val countryDAO = AppDatabase.getInstance(context).countryDAO
 
         favorites.forEach {
 
-            val country = countryDAO.getSingleCountryByID(it.ID)
-            //val favorite = favoriteDAO.getSingleFavorite(it.ID)
-            //Log.i("updateFavorites", country.toString())
+            val duplicateFavorites = ArrayList(favoriteDAO.getFavoritesWithSameName(it.Country))
 
-            if (country != null) {
-                favoriteDAO.deleteSingleFavorite(it.Country)
-                val newFavorite = FavoriteEntity(
-                    country.ID,
-                    country.CountryISO,
-                    country.Country,
-                    country.Continent,
-                    country.Date,
-                    country.TotalCases,
-                    country.NewCases,
-                    country.TotalDeaths,
-                    country.NewDeaths,
-                    country.TotalCasesPerMillion,
-                    country.NewCasesPerMillion,
-                    country.TotalDeathsPerMillion,
-                    country.NewDeathsPerMillion,
-                    country.StringencyIndex,
-                    country.DailyIncidenceConfirmedCases,
-                    country.DailyIncidenceConfirmedDeaths,
-                    country.DailyIncidenceConfirmedCasesPerMillion,
-                    country.DailyIncidenceConfirmedDeathsPerMillion,
-                    country.IncidenceRiskConfirmedPerHundredThousand,
-                    country.IncidenceRiskDeathsPerHundredThousand,
-                    country.IncidenceRiskNewConfirmedPerHundredThousand,
-                    country.IncidenceRiskNewDeathsPerHundredThousand,
-                    country.CaseFatalityRatio
-                )
-                favoriteDAO.insertFavorite(newFavorite)
+            if (duplicateFavorites.size > 1) {
+                for (i in 0..duplicateFavorites.size - 2) {
+                    favoriteDAO.deleteSingleFavorite(duplicateFavorites[i].ID)
+                }
+                val updatedCountry = countryDAO.getSingleCountry(duplicateFavorites[0].Country)
+                favoriteDAO.insertFavorite(
+                    FavoriteEntity(
+                        updatedCountry.ID,
+                        updatedCountry.CountryISO,
+                        updatedCountry.Country,
+                        updatedCountry.Continent,
+                        updatedCountry.Date,
+                        updatedCountry.TotalCases,
+                        updatedCountry.NewCases,
+                        updatedCountry.TotalDeaths,
+                        updatedCountry.NewDeaths,
+                        updatedCountry.TotalCasesPerMillion,
+                        updatedCountry.NewCasesPerMillion,
+                        updatedCountry.TotalDeathsPerMillion,
+                        updatedCountry.NewDeathsPerMillion,
+                        updatedCountry.StringencyIndex,
+                        updatedCountry.DailyIncidenceConfirmedCases,
+                        updatedCountry.DailyIncidenceConfirmedDeaths,
+                        updatedCountry.DailyIncidenceConfirmedCasesPerMillion,
+                        updatedCountry.DailyIncidenceConfirmedDeathsPerMillion,
+                        updatedCountry.IncidenceRiskConfirmedPerHundredThousand,
+                        updatedCountry.IncidenceRiskDeathsPerHundredThousand,
+                        updatedCountry.IncidenceRiskNewConfirmedPerHundredThousand,
+                        updatedCountry.IncidenceRiskNewDeathsPerHundredThousand,
+                        updatedCountry.CaseFatalityRatio))
+            } else {
+                val updatedCountry = countryDAO.getSingleCountry(it.Country)
+
+                favoriteDAO.deleteSingleFavorite(it.ID)
+                favoriteDAO.insertFavorite(
+                    FavoriteEntity(
+                        updatedCountry.ID,
+                        updatedCountry.CountryISO,
+                        updatedCountry.Country,
+                        updatedCountry.Continent,
+                        updatedCountry.Date,
+                        updatedCountry.TotalCases,
+                        updatedCountry.NewCases,
+                        updatedCountry.TotalDeaths,
+                        updatedCountry.NewDeaths,
+                        updatedCountry.TotalCasesPerMillion,
+                        updatedCountry.NewCasesPerMillion,
+                        updatedCountry.TotalDeathsPerMillion,
+                        updatedCountry.NewDeathsPerMillion,
+                        updatedCountry.StringencyIndex,
+                        updatedCountry.DailyIncidenceConfirmedCases,
+                        updatedCountry.DailyIncidenceConfirmedDeaths,
+                        updatedCountry.DailyIncidenceConfirmedCasesPerMillion,
+                        updatedCountry.DailyIncidenceConfirmedDeathsPerMillion,
+                        updatedCountry.IncidenceRiskConfirmedPerHundredThousand,
+                        updatedCountry.IncidenceRiskDeathsPerHundredThousand,
+                        updatedCountry.IncidenceRiskNewConfirmedPerHundredThousand,
+                        updatedCountry.IncidenceRiskNewDeathsPerHundredThousand,
+                        updatedCountry.CaseFatalityRatio)
+                    )
             }
         }
     }
-
 }

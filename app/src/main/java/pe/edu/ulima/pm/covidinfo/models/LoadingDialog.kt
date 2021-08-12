@@ -1,7 +1,8 @@
-package pe.edu.ulima.pm.covidinfo
+package pe.edu.ulima.pm.covidinfo.models
 
 import android.app.Activity
 import android.app.AlertDialog
+import pe.edu.ulima.pm.covidinfo.R
 
 class LoadingDialog(val activity: Activity) {
 

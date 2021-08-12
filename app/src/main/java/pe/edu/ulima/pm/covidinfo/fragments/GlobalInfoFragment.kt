@@ -2,7 +2,6 @@ package pe.edu.ulima.pm.covidinfo.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,8 +19,6 @@ import pe.edu.ulima.pm.covidinfo.R
 import pe.edu.ulima.pm.covidinfo.models.AppDatabase
 import pe.edu.ulima.pm.covidinfo.models.persistence.dao.GlobalDAO
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.GlobalEntity
-import pe.edu.ulima.pm.covidinfo.objects.GlobalDataInfo
-import pe.edu.ulima.pm.covidinfo.objects.GlobalStats
 import java.text.DecimalFormat
 
 class GlobalInfoFragment: Fragment() {
@@ -110,7 +107,7 @@ class GlobalInfoFragment: Fragment() {
         pieDataSet.colors = colors
         pieData.setValueTextSize(10f)
         pieData.setValueFormatter(PercentFormatter(pchGlobalData))
-        pchGlobalData.animateXY(1500,1500)
+        pchGlobalData.animateXY(1000,1000)
         pchGlobalData.data = pieData
         pchGlobalData.setHoleColor(ContextCompat.getColor(requireContext(), R.color.lightblue))
         pchGlobalData.description.text=""

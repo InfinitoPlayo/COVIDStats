@@ -1,7 +1,5 @@
 package pe.edu.ulima.pm.covidinfo.models.dao
 
-import java.io.Serializable
-
 // Data class para acceder a la data historica de un pais
 data class CountryHistoricalData(
     val ID: String,
