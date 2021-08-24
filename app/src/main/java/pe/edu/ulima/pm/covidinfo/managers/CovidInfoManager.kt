@@ -2,12 +2,16 @@ package pe.edu.ulima.pm.covidinfo.managers
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import pe.edu.ulima.pm.covidinfo.models.AppDatabase
-import pe.edu.ulima.pm.covidinfo.models.dao.Global
+import pe.edu.ulima.pm.covidinfo.models.dao.NovelCOVIDContinent
+import pe.edu.ulima.pm.covidinfo.models.dao.NovelCOVIDCountry
+import pe.edu.ulima.pm.covidinfo.models.persistence.entities.ContinentEntity
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.CountryEntity
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.FavoriteEntity
-import pe.edu.ulima.pm.covidinfo.models.persistence.entities.GlobalEntity
+import pe.edu.ulima.pm.covidinfo.models.services.NovelCOVIDService
+import pe.edu.ulima.pm.covidinfo.objects.NovelCOVIDCountries
 
 class CovidInfoManager {
 
@@ -23,21 +27,6 @@ class CovidInfoManager {
         }
     }
 
-    //Convierte un Global en un GlobalEntity
-    fun setGlobalEntity(global: Global): GlobalEntity {
-
-        return GlobalEntity(
-            0,
-            global.NewConfirmed,
-            global.TotalConfirmed,
-            global.NewDeaths,
-            global.TotalDeaths,
-            global.NewRecovered,
-            global.TotalRecovered,
-            global.Date
-        )
-    }
-
     fun verifyAvailableNetwork(activity: AppCompatActivity): Boolean {
         val connectivityManager = activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
@@ -45,7 +34,6 @@ class CovidInfoManager {
     }
 
     fun setFavoriteEntity(country: CountryEntity): FavoriteEntity {
-
         return FavoriteEntity(
             country.ID,
             country.CountryISO,
@@ -73,7 +61,6 @@ class CovidInfoManager {
     }
 
     fun setPremiumSingleCountryDataFromCountryEntity(country: FavoriteEntity): CountryEntity {
-
         return CountryEntity(
             country.ID,
             country.CountryISO,
@@ -98,24 +85,21 @@ class CovidInfoManager {
             country.IncidenceRiskNewConfirmedPerHundredThousand,
             country.IncidenceRiskNewDeathsPerHundredThousand,
             country.CaseFatalityRatio)
-
     }
 
     //Para solo mostrar paises actualizados y quitar posibles duplicados
     suspend fun updateFavorites(favorites: ArrayList<FavoriteEntity>, context: Context) {
-
         val favoriteDAO = AppDatabase.getInstance(context).favoriteDAO
         val countryDAO = AppDatabase.getInstance(context).countryDAO
 
         favorites.forEach {
-
             val duplicateFavorites = ArrayList(favoriteDAO.getFavoritesWithSameName(it.Country))
 
             if (duplicateFavorites.size > 1) {
-                for (i in 0..duplicateFavorites.size - 2) {
-                    favoriteDAO.deleteSingleFavorite(duplicateFavorites[i].ID)
+                duplicateFavorites.forEach { fav ->
+                    favoriteDAO.deleteSingleFavorite(fav.ID)
                 }
-                val updatedCountry = countryDAO.getSingleCountry(duplicateFavorites[0].Country)
+                val updatedCountry = countryDAO.getSingleCountry(duplicateFavorites[1].Country)
                 favoriteDAO.insertFavorite(
                     FavoriteEntity(
                         updatedCountry.ID,
@@ -173,5 +157,45 @@ class CovidInfoManager {
                     )
             }
         }
+    }
+
+    suspend fun getNovelCOVIDCountries() {
+        val retrofit = NovelCOVIDConnectionManager.getInstance().getRetrofit()
+        val countries: ArrayList<NovelCOVIDCountry> = ArrayList()
+
+        val call = retrofit.create(NovelCOVIDService::class.java).getCountriesData("/v2/countries?yesterday&sort")
+        // Si se devuelve data
+        if (call.isSuccessful) {
+            Log.i("MainActivity", call.raw().toString())
+            call.body()!!.forEach { countries.add(it) }
+            NovelCOVIDCountries.countries = countries
+
+        }else {
+            Log.i("MainActivity", call.errorBody().toString())
+        }
+    }
+
+    fun setContinentEntity(continent: NovelCOVIDContinent): ContinentEntity {
+        return ContinentEntity(
+            0,
+            continent.updated,
+            continent.cases,
+            continent.todayCases,
+            continent.deaths,
+            continent.todayDeaths,
+            continent.recovered,
+            continent.todayRecovered,
+            continent.active,
+            continent.critical,
+            continent.casesPerOneMillion,
+            continent.deathsPerOneMillion,
+            continent.tests,
+            continent.testsPerOneMillion,
+            continent.population,
+            continent.continent,
+            continent.activePerOneMillion,
+            continent.recoveredPerOneMillion,
+            continent.criticalPerOneMillion
+        )
     }
 }

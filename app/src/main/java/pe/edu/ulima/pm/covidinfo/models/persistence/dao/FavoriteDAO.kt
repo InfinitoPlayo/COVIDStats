@@ -1,6 +1,7 @@
 package pe.edu.ulima.pm.covidinfo.models.persistence.dao
 
 import androidx.room.*
+import pe.edu.ulima.pm.covidinfo.models.persistence.entities.CountryEntity
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.FavoriteEntity
 
 @Dao
@@ -15,12 +16,14 @@ interface FavoriteDAO {
     @Query("DELETE FROM FavoriteEntity WHERE ID = :ID")
     suspend fun deleteSingleFavorite(ID: String)
 
-    //Query para buscar un pais especifico
+    @Transaction
+    @Query("SELECT * FROM FavoriteEntity WHERE country = :country")
+    suspend fun getSingleFavorite(country: String): FavoriteEntity?
+
     @Transaction
     @Query("SELECT * FROM FavoriteEntity WHERE ID = :ID")
-    suspend fun getSingleFavorite(ID: String): FavoriteEntity
+    suspend fun getSingleFavoriteByID(ID: String): FavoriteEntity?
 
-    //Query para buscar un pais especifico
     @Transaction
     @Query("SELECT * FROM FavoriteEntity WHERE Country = :country")
     suspend fun getFavoritesWithSameName(country: String): List<FavoriteEntity>

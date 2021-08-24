@@ -1,4 +1,4 @@
-package pe.edu.ulima.pm.covidinfo.models
+package pe.edu.ulima.pm.covidinfo.dialogues
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -15,7 +15,7 @@ class LoadingDialog(val activity: Activity) {
 
         val builder = AlertDialog.Builder(activity)
         builder.setView(dialogView)
-        builder.setCancelable(false)
+        builder.setCancelable(true)
         isDialog = builder.create()
         isDialog.show()
     }

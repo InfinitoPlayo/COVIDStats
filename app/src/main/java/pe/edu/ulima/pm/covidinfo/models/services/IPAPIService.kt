@@ -1,5 +1,6 @@
-package pe.edu.ulima.pm.covidinfo.models.dao
+package pe.edu.ulima.pm.covidinfo.models.services
 
+import pe.edu.ulima.pm.covidinfo.models.dao.LocationData
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Url

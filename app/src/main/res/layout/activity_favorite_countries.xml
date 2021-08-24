@@ -13,7 +13,7 @@
         android:background="@color/colorPrimary"
         android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
         app:title="COVID Stats"
-        app:navigationIcon="@drawable/covidstats_24"
+        app:navigationIcon="@drawable/covidstats_30"
         app:titleTextColor="@color/lightgrey"/>
 
     <TextView

@@ -2,8 +2,12 @@ package pe.edu.ulima.pm.covidinfo
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.launch
+import pe.edu.ulima.pm.covidinfo.dialogues.LoadingDialog
 import pe.edu.ulima.pm.covidinfo.fragments.FavoriteCountriesFragment
 import pe.edu.ulima.pm.covidinfo.managers.CovidInfoManager
 import pe.edu.ulima.pm.covidinfo.objects.InternetConnection
@@ -11,10 +15,13 @@ import pe.edu.ulima.pm.covidinfo.objects.InternetConnection
 class FavoriteCountriesActivity: AppCompatActivity() {
 
     private var bottomBar: BottomNavigationView? = null
+    private var loadingDialog: LoadingDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_favorite_countries)
+
+        loadingDialog = LoadingDialog(this)
 
         //Seteando el BottomNavigationView
         bottomBar = findViewById(R.id.bnvFavoriteCountries)
@@ -43,7 +50,16 @@ class FavoriteCountriesActivity: AppCompatActivity() {
                 }
                 //Click en el icono de maps
                 R.id.ic_worldmap -> {
-                    startActivity(Intent(this, MapsActivity::class.java))
+                    if (CovidInfoManager.getInstance().verifyAvailableNetwork(this)) {
+                        lifecycleScope.launch {
+                            loadingDialog!!.startLoading()
+                            CovidInfoManager.getInstance().getNovelCOVIDCountries()
+                            loadingDialog!!.isDismiss()
+                            startActivity(Intent(this@FavoriteCountriesActivity, MapsActivity::class.java))
+                        }
+                    } else {
+                        Toast.makeText(this, "Internet connection is needed", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             true

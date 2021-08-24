@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
-import pe.edu.ulima.pm.covidinfo.models.LoadingDialog
+import pe.edu.ulima.pm.covidinfo.dialogues.LoadingDialog
 import pe.edu.ulima.pm.covidinfo.R
 import pe.edu.ulima.pm.covidinfo.SingleCountryActivity
 import pe.edu.ulima.pm.covidinfo.adapters.FavoriteCountriesRVAdapter
@@ -18,7 +18,7 @@ import pe.edu.ulima.pm.covidinfo.adapters.OnFavoriteCountryItemClickListener
 import pe.edu.ulima.pm.covidinfo.managers.CovidAPIConnectionManager
 import pe.edu.ulima.pm.covidinfo.managers.CovidInfoManager
 import pe.edu.ulima.pm.covidinfo.models.AppDatabase
-import pe.edu.ulima.pm.covidinfo.models.dao.CovidAPIService
+import pe.edu.ulima.pm.covidinfo.models.services.CovidAPIService
 import pe.edu.ulima.pm.covidinfo.models.persistence.dao.FavoriteDAO
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.FavoriteEntity
 import pe.edu.ulima.pm.covidinfo.objects.InternetConnection
@@ -53,10 +53,9 @@ class FavoriteCountriesFragment: Fragment(), OnFavoriteCountryItemClickListener 
 
         lifecycleScope.launch {
 
-            favorites = ArrayList(favoriteDAO!!.getAllFavorites())
-
-            if (favorites.isNotEmpty()){
-                CovidInfoManager.getInstance().updateFavorites(favorites, view.context)
+            if (ArrayList(favoriteDAO!!.getAllFavorites()).isNotEmpty()){
+                CovidInfoManager.getInstance().updateFavorites(ArrayList(favoriteDAO!!.getAllFavorites()), view.context)
+                favorites = ArrayList(favoriteDAO!!.getAllFavorites())
             }
             val favoriteCountriesRVAdapter = FavoriteCountriesRVAdapter(favorites, this@FavoriteCountriesFragment, view.context)
             rviFavoriteCountries!!.adapter = favoriteCountriesRVAdapter
@@ -86,7 +85,7 @@ class FavoriteCountriesFragment: Fragment(), OnFavoriteCountryItemClickListener 
         if (InternetConnection.isConnected) {
             searchSingleCountryHistoricalData()
         } else {
-            startActivity(Intent(context,SingleCountryActivity::class.java))
+            startActivity(Intent(context, SingleCountryActivity::class.java))
         }
     }
 }

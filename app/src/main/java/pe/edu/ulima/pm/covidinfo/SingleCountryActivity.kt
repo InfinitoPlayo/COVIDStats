@@ -6,12 +6,17 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.launch
+import pe.edu.ulima.pm.covidinfo.dialogues.LoadingDialog
 import pe.edu.ulima.pm.covidinfo.fragments.SingleCountryActiveGraphFragment
+import pe.edu.ulima.pm.covidinfo.fragments.SingleCountryExtendedGraphFragment
 import pe.edu.ulima.pm.covidinfo.fragments.SingleCountryPiechartFragment
 import pe.edu.ulima.pm.covidinfo.fragments.SingleCountryTotalGraphFragment
 import pe.edu.ulima.pm.covidinfo.managers.CovidInfoManager
@@ -21,12 +26,12 @@ import pe.edu.ulima.pm.covidinfo.objects.PremiumSingleCountryStats
 class SingleCountryActivity: AppCompatActivity() {
 
     private var tviTitle: TextView? = null
-
     private var toolbar: androidx.appcompat.widget.Toolbar? = null
     private var fragments: ArrayList<Fragment> = ArrayList()
     private var dlaSingleCountry: DrawerLayout? = null
     private var nviSingleCountry: NavigationView? = null
     private var bottomBar: BottomNavigationView? = null
+    private var loadingDialog: LoadingDialog? = null
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +44,9 @@ class SingleCountryActivity: AppCompatActivity() {
         fragments.add(SingleCountryPiechartFragment())
         fragments.add(SingleCountryTotalGraphFragment())
         fragments.add(SingleCountryActiveGraphFragment())
+        fragments.add(SingleCountryExtendedGraphFragment())
+
+        loadingDialog = LoadingDialog(this)
 
         //Seteando el toolbar
         toolbar = findViewById(R.id.tbaMain)
@@ -55,13 +63,14 @@ class SingleCountryActivity: AppCompatActivity() {
 
         if (CovidInfoManager.getInstance().verifyAvailableNetwork(this)) {
             InternetConnection.isConnected
+        } else {
+            InternetConnection.isConnected = false
         }
 
         val ft = supportFragmentManager.beginTransaction()
         ft.replace(R.id.flaSingleCountry, fragments[0])
         ft.addToBackStack(null)
         ft.commit()
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -75,28 +84,33 @@ class SingleCountryActivity: AppCompatActivity() {
 
             when (it.itemId) {
                 //Click en el icono Home
-                R.id.ic_home -> {
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
+                R.id.ic_home ->  {
+                    startActivity(Intent(this, MainActivity::class.java))
                 }
                 //Click en el icono de lista de paises
                 R.id.ic_countries -> {
-                    val intent = Intent(this, CountriesInfoActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this, CountriesInfoActivity::class.java))
                 }
                 //Click en el icono de ranking de paises
                 R.id.ic_ranking -> {
-                    val intent = Intent(this, CountriesRankActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this, CountriesRankActivity::class.java))
                 }
                 //Click en el icono de favoritos
                 R.id.ic_favorites -> {
-                    val intent = Intent(this, FavoriteCountriesActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this, FavoriteCountriesActivity::class.java))
                 }
                 //Click en el icono de maps
                 R.id.ic_worldmap -> {
-                    startActivity(Intent(this, MapsActivity::class.java))
+                    if (CovidInfoManager.getInstance().verifyAvailableNetwork(this)) {
+                        lifecycleScope.launch {
+                            loadingDialog!!.startLoading()
+                            CovidInfoManager.getInstance().getNovelCOVIDCountries()
+                            loadingDialog!!.isDismiss()
+                            startActivity(Intent(this@SingleCountryActivity, MapsActivity::class.java))
+                        }
+                    } else {
+                        Toast.makeText(this, "Internet connection is needed", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             true
@@ -127,8 +141,12 @@ class SingleCountryActivity: AppCompatActivity() {
                     ft.replace(R.id.flaSingleCountry, fragments[2])
                     tviTitle!!.text = "${PremiumSingleCountryStats.country!!.Country} active cases graph"
                 }
+                R.id.mnuExtendedGraph -> {
+                    // Abrir SingleCountryExtendedGraphFragment
+                    ft.replace(R.id.flaSingleCountry, fragments[3])
+                    tviTitle!!.text = "${PremiumSingleCountryStats.country!!.Country} active cases graph (historical)"
+                }
             }
-
             ft.addToBackStack(null)
             ft.commit()
             dlaSingleCountry!!.closeDrawers()

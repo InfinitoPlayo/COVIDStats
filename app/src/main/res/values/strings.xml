@@ -42,10 +42,21 @@
     <string name="new_deaths_per_100k">New deaths per 100k</string>
     <string name="new_deaths_per_million">New deaths per million</string>
     <string name="total_cases_per_100k">Total cases per 100k</string>
-    <string name="global_stats">Global stats</string>
+    <string name="global_stats">Global Stats</string>
     <string name="my_country">My country</string>
     <string name="_194">194.</string>
     <string name="world_map">World map</string>
     <string name="maps">Maps</string>
+    <string name="space">" "</string>
+    <string name="_80k_cpm">80k cpm</string>
+    <string name="_20k_cpm"><![CDATA[<20k cpm]]></string>
+    <string name="_80k_cpm_"><![CDATA[<80k cpm]]></string>
+    <string name="_80k_cpm__"><![CDATA[>80k cpm]]></string>
+    <string name="this_graph_contains_all_the_reports_sent_by_this_country">This graph contains all the reports sent by this country.</string>
+    <string name="all_reports_graph">All reports graph</string>
+    <string name="summary">Summary</string>
+    <string name="last_day_data">Last day data</string>
+    <string name="total_tests">Total tests</string>
+    <string name="tests_per_million">Tests per million</string>
 
 </resources>

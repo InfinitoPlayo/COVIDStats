@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
@@ -16,8 +17,8 @@ import pe.edu.ulima.pm.covidinfo.adapters.OnCountryInfoItemClickListener
 import pe.edu.ulima.pm.covidinfo.managers.CovidAPIConnectionManager
 import pe.edu.ulima.pm.covidinfo.managers.CovidInfoManager
 import pe.edu.ulima.pm.covidinfo.models.AppDatabase
-import pe.edu.ulima.pm.covidinfo.models.LoadingDialog
-import pe.edu.ulima.pm.covidinfo.models.dao.CovidAPIService
+import pe.edu.ulima.pm.covidinfo.dialogues.LoadingDialog
+import pe.edu.ulima.pm.covidinfo.models.services.CovidAPIService
 import pe.edu.ulima.pm.covidinfo.models.persistence.dao.CountryDAO
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.CountryEntity
 import pe.edu.ulima.pm.covidinfo.objects.PremiumSingleCountryStats
@@ -48,11 +49,12 @@ class CountriesInfoActivity: AppCompatActivity(), OnCountryInfoItemClickListener
         rviCompetitions = findViewById(R.id.rviCountriesInfo)
 
         countryDAO = AppDatabase.getInstance(this).countryDAO
+        loadingDialog = LoadingDialog(this)
+
         lifecycleScope.launch {
             countryEntityList = removeEmptyCountries(ArrayList(countryDAO!!.getAllCountries()))
             Log.i("CountryEntityList", countryEntityList.toString())
 
-            loadingDialog = LoadingDialog(this@CountriesInfoActivity)
             displayList.addAll(countryEntityList)
 
             val countriesRVAdapter = CountriesInfoRVAdapter(displayList, this@CountriesInfoActivity, this@CountriesInfoActivity)
@@ -68,7 +70,7 @@ class CountriesInfoActivity: AppCompatActivity(), OnCountryInfoItemClickListener
         intentSingleCountry = Intent(this, SingleCountryActivity::class.java)
 
         //Seteando el BottomNavigationView
-        bottomBar = findViewById(R.id.bnvCountriesInfo)
+              bottomBar = findViewById(R.id.bnvCountriesInfo)
         bottomBar!!.setOnItemSelectedListener {
 
             when (it.itemId) {
@@ -94,7 +96,16 @@ class CountriesInfoActivity: AppCompatActivity(), OnCountryInfoItemClickListener
                 }
                 //Click en el icono de maps
                 R.id.ic_worldmap -> {
-                    startActivity(Intent(this, MapsActivity::class.java))
+                    if (CovidInfoManager.getInstance().verifyAvailableNetwork(this)) {
+                        lifecycleScope.launch {
+                            loadingDialog!!.startLoading()
+                            CovidInfoManager.getInstance().getNovelCOVIDCountries()
+                            loadingDialog!!.isDismiss()
+                            startActivity(Intent(this@CountriesInfoActivity, MapsActivity::class.java))
+                        }
+                    } else {
+                        Toast.makeText(this, "Internet connection is needed", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             true
@@ -174,7 +185,7 @@ class CountriesInfoActivity: AppCompatActivity(), OnCountryInfoItemClickListener
         countryName = country.Country.replace(" ", "-").lowercase()
 
         if (CovidInfoManager.getInstance().verifyAvailableNetwork(this)) {
-            intentSingleCountry!!.putExtra("IsConnected", "true")
+            intentSingleCountry!!.putExtra("IsConnected", " true")
             searchSingleCountryHistoricalData()
         } else {
             intentSingleCountry!!.putExtra("IsConnected", "false")

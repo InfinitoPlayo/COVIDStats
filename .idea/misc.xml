@@ -1,5 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/drawable/background_item_country.xml" value="0.3828125" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/activity_countries_info.xml" value="0.36102564102564105" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/activity_countries_rank.xml" value="0.36102564102564105" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/activity_favorite_countries.xml" value="0.36102564102564105" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/activity_maps.xml" value="0.36102564102564105" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/activity_single_country.xml" value="0.36102564102564105" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/activity_splash_screen.xml" value="0.36102564102564105" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/fragment_continents_info.xml" value="0.36666666666666664" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/fragment_countries_info.xml" value="0.36102564102564105" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/fragment_favorite_countries.xml" value="0.36102564102564105" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/fragment_global_info_piechart.xml" value="0.33" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/fragment_loading.xml" value="0.36102564102564105" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/fragment_single_country_extended_graph.xml" value="0.36666666666666664" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/fragment_single_country_new_graph.xml" value="0.36102564102564105" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/fragment_single_country_piechart.xml" value="0.33" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/fragment_single_country_total_graph.xml" value="0.36102564102564105" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/item_country_info.xml" value="0.36102564102564105" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/item_country_rank.xml" value="0.33" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/item_favorite_country_info.xml" value="0.36666666666666664" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/loading_dialog.xml" value="0.36102564102564105" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/layout/navigation_header.xml" value="0.36666666666666664" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/menu/bottom_menu.xml" value="0.36102564102564105" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/menu/left_menu_country.xml" value="0.36102564102564105" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/menu/left_menu_main.xml" value="0.36102564102564105" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/menu/toolbar_countries_info_menu.xml" value="0.36102564102564105" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/menu/toolbar_main_menu.xml" value="0.36102564102564105" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.22135416666666666" />
+        <entry key="..\:/Biblioteca/Documentos/ProgramacionMovil/COVIDInfo/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.3769230769230769" />
+      </map>
+    </option>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>

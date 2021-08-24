@@ -437,7 +437,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
-        android:text="@string/last_report_data"
+        android:text="@string/last_day_data"
         android:textSize="20sp"
         android:textColor="#333333"
         android:gravity="center"

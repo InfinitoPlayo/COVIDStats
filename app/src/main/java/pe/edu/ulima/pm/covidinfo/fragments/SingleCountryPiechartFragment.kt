@@ -121,13 +121,11 @@ class SingleCountryPiechartFragment: Fragment() {
         else
             tviNewMortalityRatioCountry.text = "-"
 
-        //Al hacer click en el boton de favorito, se anade o elimina de los favoritos
+        //Al hacer click en el boton de favorito, se anade o elimina el pais de los favoritos
         butAddFavorite!!.setOnClickListener {
 
             val favoriteEntity: FavoriteEntity = CovidInfoManager.getInstance().setFavoriteEntity(PremiumSingleCountryStats.country!!)
             lifecycleScope.launch {
-
-                Log.i("SingleCountryPiechart", isFavorite.toString())
                 if(isFavorite == 1) {
                     favoriteDAO!!.deleteSingleFavorite(favoriteEntity.ID)
                     Toast.makeText(context, "${sc?.Country} removed from favorites", Toast.LENGTH_SHORT).show()
@@ -146,7 +144,6 @@ class SingleCountryPiechartFragment: Fragment() {
 
     //Configurar el PieChart
     private fun setPieChart() {
-
         val pieDataSet = PieDataSet(getList().toCollection(ArrayList()), "")
         val pieData = PieData(pieDataSet)
 
@@ -164,17 +161,14 @@ class SingleCountryPiechartFragment: Fragment() {
     }
 
     private fun getList() : Array<PieEntry?> {
-
         dataList[0] = PieEntry(sc!!.TotalCasesPerMillion.toFloat(), "Cases/million")
         dataList[1] = PieEntry(sc!!.TotalDeathsPerMillion.toFloat(), "Deaths/million")
-
         return dataList
     }
 
     private suspend fun isFavorite(country: CountryEntity) {
-
         favoriteDAO = AppDatabase.getInstance(requireContext()).favoriteDAO
-        val query = favoriteDAO?.getSingleFavorite(country.ID)
+        val query = favoriteDAO!!.getSingleFavorite(country.Country)
 
         if (query == null) {
             butAddFavorite!!.background = emptyStar

@@ -12,13 +12,14 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import pe.edu.ulima.pm.covidinfo.R
 import pe.edu.ulima.pm.covidinfo.models.dao.CountryHistoricalData
+import pe.edu.ulima.pm.covidinfo.objects.InternetConnection
 import pe.edu.ulima.pm.covidinfo.objects.SingleCountryHistoricalStats
 
 class SingleCountryTotalGraphFragment: Fragment() {
 
     private var tviChartInfo: TextView? = null
     private var lineChart: LineChart? = null
-    private lateinit var countryList : ArrayList<Entry>
+    private lateinit var entryList : ArrayList<Entry>
     private val limitedList = arrayOfNulls<CountryHistoricalData>(21)
 
     override fun onCreateView(
@@ -29,18 +30,17 @@ class SingleCountryTotalGraphFragment: Fragment() {
         return inflater.inflate(R.layout.fragment_single_country_total_graph, container, false)
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         tviChartInfo = view.findViewById(R.id.tviChartInfo)
 
         //Si hay internet
-        if (requireActivity().intent.getStringExtra("IsConnected") == "true") {
+        if (requireActivity().intent.getStringExtra("IsConnected") == "true" || InternetConnection.isConnected) {
             getLastTwentyItems()
 
             lineChart = view.findViewById(R.id.lineChart)
-            countryList = ArrayList()
+            entryList = ArrayList()
 
             val lineDataSet = LineDataSet(getList(), "Total cases")
             lineDataSet.setDrawFilled(true)
@@ -61,12 +61,11 @@ class SingleCountryTotalGraphFragment: Fragment() {
         }
     }
 
-
     private fun getList(): ArrayList<Entry>{
         for (i in 1..20) {
-            countryList.add(Entry(i.toFloat(), limitedList[i-1]?.Confirmed!!.toFloat()))
+            entryList.add(Entry(i.toFloat(), limitedList[i-1]?.Confirmed!!.toFloat()))
         }
-        return  countryList
+        return  entryList
     }
 
     // Obtener ultimos 20 registros del pais

@@ -3,10 +3,12 @@
     <group android:checkableBehavior="single">
         <item android:id="@+id/mnuPiechart"
             android:checked="true"
-            android:title="@string/piechart"/>
+            android:title="@string/summary"/>
         <item android:id="@+id/mnuGraph"
             android:title="@string/total_cases_graph"/>
         <item android:id="@+id/mnuActiveGraph"
             android:title="@string/active_cases_graph"/>
+        <item android:id="@+id/mnuExtendedGraph"
+            android:title="@string/all_reports_graph"/>
     </group>
 </menu>

@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-// Data class de país para la BD
+// Data class con datos para cada pais
 @Entity
 data class CountryEntity (
     @PrimaryKey(autoGenerate = false) var ID: String,

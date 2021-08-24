@@ -15,7 +15,7 @@
         android:background="@color/colorPrimary"
         android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
         app:title="COVID Stats"
-        app:navigationIcon="@drawable/covidstats_24"
+        app:navigationIcon="@drawable/covidstats_30"
         app:titleTextColor="@color/lightgrey"/>
 
     <androidx.fragment.app.FragmentContainerView
@@ -26,6 +26,59 @@
         tools:context=".MapsActivity"
         android:name="com.google.android.gms.maps.SupportMapFragment">
     </androidx.fragment.app.FragmentContainerView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/map_pin_green"
+            android:contentDescription="@string/space" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/_20k_cpm"
+            android:layout_gravity="center"
+            android:textSize="12sp"/>
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/map_pin_yellow"
+            android:contentDescription="@string/space" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/_80k_cpm_"
+            android:layout_gravity="center"
+            android:textSize="12sp"/>
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/map_pin_2"
+            android:contentDescription="@string/space" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/_80k_cpm__"
+            android:layout_gravity="center"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bnvMaps"

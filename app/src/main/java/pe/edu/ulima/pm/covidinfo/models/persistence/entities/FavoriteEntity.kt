@@ -4,10 +4,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-
+//Para guardar los paises favoritos del usuario
 @Entity
 data class FavoriteEntity(
-
     @PrimaryKey(autoGenerate = false) var ID: String,
     @ColumnInfo(name = "CountryISO") var CountryISO: String,
     @ColumnInfo(name = "Country") var Country: String,

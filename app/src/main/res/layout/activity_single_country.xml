@@ -20,7 +20,7 @@
             android:background="@color/colorPrimary"
             android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
             app:title="COVID Stats"
-            app:navigationIcon="@drawable/covidstats_24"
+            app:navigationIcon="@drawable/covidstats_30"
             app:titleTextColor="@color/lightgrey"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
@@ -15,8 +16,8 @@ import pe.edu.ulima.pm.covidinfo.adapters.OnCountryRankItemClickListener
 import pe.edu.ulima.pm.covidinfo.managers.CovidAPIConnectionManager
 import pe.edu.ulima.pm.covidinfo.managers.CovidInfoManager
 import pe.edu.ulima.pm.covidinfo.models.AppDatabase
-import pe.edu.ulima.pm.covidinfo.models.LoadingDialog
-import pe.edu.ulima.pm.covidinfo.models.dao.CovidAPIService
+import pe.edu.ulima.pm.covidinfo.dialogues.LoadingDialog
+import pe.edu.ulima.pm.covidinfo.models.services.CovidAPIService
 import pe.edu.ulima.pm.covidinfo.models.persistence.dao.CountryDAO
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.CountryEntity
 import pe.edu.ulima.pm.covidinfo.objects.PremiumSingleCountryStats
@@ -47,10 +48,10 @@ class CountriesRankActivity: AppCompatActivity(), OnCountryRankItemClickListener
         rviCompetitions = findViewById(R.id.rviCountriesRank)
 
         countryDAO = AppDatabase.getInstance(this).countryDAO
+        loadingDialog = LoadingDialog(this)
+
         lifecycleScope.launch {
             countryEntityList = orderCountriesByTotalCases(ArrayList(countryDAO!!.getAllCountries()))
-
-            loadingDialog = LoadingDialog(this@CountriesRankActivity)
             displayList.addAll(countryEntityList)
 
             val countriesRVAdapter = CountriesRankRVAdapter(displayList, this@CountriesRankActivity, this@CountriesRankActivity)
@@ -87,7 +88,16 @@ class CountriesRankActivity: AppCompatActivity(), OnCountryRankItemClickListener
                 }
                 //Click en el icono de maps
                 R.id.ic_worldmap -> {
-                    startActivity(Intent(this, MapsActivity::class.java))
+                    if (CovidInfoManager.getInstance().verifyAvailableNetwork(this)) {
+                        lifecycleScope.launch {
+                            loadingDialog!!.startLoading()
+                            CovidInfoManager.getInstance().getNovelCOVIDCountries()
+                            loadingDialog!!.isDismiss()
+                            startActivity(Intent(this@CountriesRankActivity, MapsActivity::class.java))
+                        }
+                    } else {
+                        Toast.makeText(this, "Internet connection is needed", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             true

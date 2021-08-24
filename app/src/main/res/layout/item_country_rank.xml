@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="85dp"
+    android:layout_height="70dp"
     android:paddingHorizontal="20dp"
-    android:paddingVertical="15dp"
+    android:paddingVertical="12dp"
     android:background="@drawable/background_item_country">
 
     <LinearLayout
@@ -17,10 +17,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:text="@string/_194"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:layout_marginRight="10dp"
             android:textColor="@color/black"
-            android:layout_marginEnd="10dp" />
+            android:layout_marginEnd="10dp"
+            android:textAlignment="center"
+            android:gravity="center_horizontal" />
 
         <RelativeLayout
             android:layout_width="0sp"
@@ -34,7 +36,7 @@
                 android:paddingTop="5dp"
                 android:text="@string/australia"
                 android:textColor="@color/black"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
 
             <TextView
                 android:id="@+id/tviCountryInfoR"
@@ -42,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="@string/additional_info"
-                android:textSize="15sp"
+                android:textSize="13sp"
                 android:layout_alignBottom="@id/tviCountryNameR"
                 android:layout_alignParentBottom="true"
                 android:textColor="#333333"/>

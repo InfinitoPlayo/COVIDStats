@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-// Creamos nuestro data class de Global  para la persistencia a recibir de la api y poder mostrar la data de todos los países
+// Para guardar los datos globales recibidos de la API
 @Entity
 data class GlobalEntity(
     @PrimaryKey(autoGenerate = true) val ID: Int,

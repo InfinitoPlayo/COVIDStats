@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -21,17 +22,17 @@ import pe.edu.ulima.pm.covidinfo.managers.CovidAPIConnectionManager
 import pe.edu.ulima.pm.covidinfo.managers.CovidInfoManager
 import pe.edu.ulima.pm.covidinfo.managers.IPAPIConnectionManager
 import pe.edu.ulima.pm.covidinfo.models.AppDatabase
-import pe.edu.ulima.pm.covidinfo.models.LoadingDialog
+import pe.edu.ulima.pm.covidinfo.dialogues.LoadingDialog
+import pe.edu.ulima.pm.covidinfo.managers.NovelCOVIDConnectionManager
 import pe.edu.ulima.pm.covidinfo.models.dao.*
-import pe.edu.ulima.pm.covidinfo.models.persistence.dao.CountryDAO
-import pe.edu.ulima.pm.covidinfo.models.persistence.dao.DateDAO
-import pe.edu.ulima.pm.covidinfo.models.persistence.dao.GlobalDAO
+import pe.edu.ulima.pm.covidinfo.models.persistence.dao.*
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.DateEntity
+import pe.edu.ulima.pm.covidinfo.models.services.CovidAPIService
+import pe.edu.ulima.pm.covidinfo.models.services.IPAPIService
+import pe.edu.ulima.pm.covidinfo.models.services.NovelCOVIDService
 import pe.edu.ulima.pm.covidinfo.objects.*
 import java.util.*
 import kotlin.collections.ArrayList
-
-// Google Maps API Key: AIzaSyDbp6M3PIhFHWrz-G1emhDrVXTOflQCdL8
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
     private var fragments: ArrayList<Fragment> = ArrayList()
     private val retrofit = CovidAPIConnectionManager.getInstance().getRetrofit()
     private val retrofit2 = IPAPIConnectionManager.getInstance().getRetrofit()
+    private val retrofit3 = NovelCOVIDConnectionManager.getInstance().getRetrofit()
     private var bottomBar: BottomNavigationView? = null
     private var location: String? = null
     private var locationLowercase: String? = null
@@ -49,8 +51,8 @@ class MainActivity : AppCompatActivity() {
 
     //Para instanciar los DAO
     private var countryDAO: CountryDAO? = null
-    private var globalDAO: GlobalDAO? = null
     private var dateDAO: DateDAO? = null
+    private var continentDAO: ContinentDAO? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,8 +63,8 @@ class MainActivity : AppCompatActivity() {
 
         //Llamando a los DAO de las 3 entidades
         countryDAO = AppDatabase.getInstance(this).countryDAO
-        globalDAO = AppDatabase.getInstance(this).globalDAO
         dateDAO = AppDatabase.getInstance(this).dateDAO
+        continentDAO = AppDatabase.getInstance(this).continentDAO
 
         if (CovidInfoManager.getInstance().verifyAvailableNetwork(this)) {
             intentSingleCountry!!.putExtra("IsConnected", "true")
@@ -83,8 +85,8 @@ class MainActivity : AppCompatActivity() {
         //Si hay conexion a internet, se recibe data actualizada del API
         if (CovidInfoManager.getInstance().verifyAvailableNetwork(this) && FirstTime.isFirstTime == 1) {
             FirstTime.isFirstTime = 0
-            getGlobalData()
-            getPremiumGlobalData()
+            getPremiumCountriesData()
+            getContinentsData()
         } else {
             fragments.add(GlobalInfoFragment())
             val transaction = supportFragmentManager.beginTransaction()
@@ -116,7 +118,16 @@ class MainActivity : AppCompatActivity() {
                 }
                 //Click en el icono de maps
                 R.id.ic_worldmap -> {
-                    startActivity(Intent(this, MapsActivity::class.java))
+                    if (CovidInfoManager.getInstance().verifyAvailableNetwork(this)) {
+                    lifecycleScope.launch {
+                        loadingDialog!!.startLoading()
+                        CovidInfoManager.getInstance().getNovelCOVIDCountries()
+                        loadingDialog!!.isDismiss()
+                        startActivity(Intent(this@MainActivity, MapsActivity::class.java))
+                    }
+                    } else {
+                        Toast.makeText(this, "Internet connection is needed", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             true
@@ -132,28 +143,8 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    // Obtener datos de https://api.covid19api.com/summary
-    private fun getGlobalData() {
-
-        lifecycleScope.launch {
-            val call = retrofit.create(CovidAPIService::class.java).getGlobalData("/summary")
-
-            // Si hay conexion con el API
-            if (call.isSuccessful) {
-
-                Log.i("MainActivity", call.raw().toString())
-                //Insertar los datos globales en la BD
-                val global = CovidInfoManager.getInstance().setGlobalEntity(call.body()!!.Global)
-                globalDAO!!.insertGlobal(global)
-
-            } else {
-                Log.i("MainActivity", call.errorBody().toString())
-            }
-        }
-    }
-
     // Obtener datos de https://api.covid19api.com/premium/summary
-    private fun getPremiumGlobalData() {
+    private fun getPremiumCountriesData() {
 
         lifecycleScope.launch {
             val call = retrofit.create(CovidAPIService::class.java).getPremiumGlobalData("/premium/summary")
@@ -184,8 +175,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun getContinentsData() {
+        lifecycleScope.launch {
+            val call = retrofit3.create(NovelCOVIDService::class.java).getContinentsData("/v2/continents?yesterday=true&sort")
+
+            //Si se devuelve data
+            if (call.isSuccessful) {
+                Log.i("MainActivity1", call.raw().toString())
+                Log.i("MainActivity1", call.body().toString())
+
+                call.body()!!.forEach {
+                    val continent = CovidInfoManager.getInstance().setContinentEntity(it)
+                    continentDAO!!.insertContinent(continent)
+                }
+                removeOutdatedContinents()
+
+            }else {
+                Log.i("MainActivity", call.errorBody().toString())
+            }
+        }
+    }
+
     // Se solicita la informacion historica del pais
-    private fun searchSingleCountryHistoricalData() {
+    private fun getSingleCountryHistoricalData() {
         loadingDialog!!.startLoading()
         lifecycleScope.launch {
             val call = retrofit.create(CovidAPIService::class.java).getCountryHistoricalStats("/country/$locationLowercase")
@@ -219,7 +231,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private suspend fun removeOutdatedCountries() {
-
         val countries = countryDAO!!.getAllCountries()
 
         for (i in 0..countries.size) {
@@ -231,9 +242,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private suspend fun removeOutdatedContinents() {
+        val continents = continentDAO!!.getAllContinents()
+        if (continents.size > 60) {
+            for (i in 1..continents.size) {
+                if (i-1 < continents.size - 60) continentDAO!!.deleteSingleContinent(continents[i-1].ID)
+            }
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     private fun setNavigationView(nvi: NavigationView) {
-
         //Se configura un listener en la barra de navegacion para que cambie de Fragment segun se solicite
         nvi.setNavigationItemSelectedListener { item: MenuItem ->
 
@@ -255,7 +274,7 @@ class MainActivity : AppCompatActivity() {
                             startActivity(Intent(this@MainActivity, SingleCountryActivity::class.java))
                         }
                     } else {
-                        searchSingleCountryHistoricalData()
+                        getSingleCountryHistoricalData()
                     }
                 }
             }
@@ -264,7 +283,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getLocationIfOffline(): String {
-
         val resources: Resources = resources
         val locale: Locale =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
