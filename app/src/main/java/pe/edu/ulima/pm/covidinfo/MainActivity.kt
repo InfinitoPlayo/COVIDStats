@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
@@ -23,6 +24,7 @@ import pe.edu.ulima.pm.covidinfo.managers.CovidInfoManager
 import pe.edu.ulima.pm.covidinfo.managers.IPAPIConnectionManager
 import pe.edu.ulima.pm.covidinfo.models.AppDatabase
 import pe.edu.ulima.pm.covidinfo.dialogues.LoadingDialog
+import pe.edu.ulima.pm.covidinfo.fragments.ContinentsInfoFragment
 import pe.edu.ulima.pm.covidinfo.managers.NovelCOVIDConnectionManager
 import pe.edu.ulima.pm.covidinfo.models.dao.*
 import pe.edu.ulima.pm.covidinfo.models.persistence.dao.*
@@ -48,6 +50,7 @@ class MainActivity : AppCompatActivity() {
     private var nviMain: NavigationView? = null
     private var loadingDialog: LoadingDialog? = null
     private var intentSingleCountry: Intent? = null
+    private var tviTitleMain: TextView? = null
 
     //Para instanciar los DAO
     private var countryDAO: CountryDAO? = null
@@ -58,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        tviTitleMain = findViewById(R.id.tviTitleMain)
         intentSingleCountry = Intent(this, SingleCountryActivity::class.java)
         loadingDialog = LoadingDialog(this)
 
@@ -89,6 +93,7 @@ class MainActivity : AppCompatActivity() {
             getContinentsData()
         } else {
             fragments.add(GlobalInfoFragment())
+            fragments.add(ContinentsInfoFragment())
             val transaction = supportFragmentManager.beginTransaction()
             transaction.replace(R.id.flaMain, fragments[1])
             transaction.addToBackStack(null)
@@ -164,6 +169,7 @@ class MainActivity : AppCompatActivity() {
 
                 //Iniciar el fragment GlobalInfoFragment
                 fragments.add(GlobalInfoFragment())
+                fragments.add(ContinentsInfoFragment())
                 val ft = supportFragmentManager.beginTransaction()
                 ft.replace(R.id.flaMain, fragments[1])
                 ft.addToBackStack(null)
@@ -260,14 +266,15 @@ class MainActivity : AppCompatActivity() {
 
             when (item.itemId) {
                 R.id.mnuGlobalInfo -> {
-                    // Abrir SingleCountryPieChartFragment
+                    tviTitleMain!!.text = "Global Stats"
+                    // Abrir GlobalInfoFragment
                     val ft = supportFragmentManager.beginTransaction()
                     ft.replace(R.id.flaMain, fragments[1])
                     ft.addToBackStack(null)
                     ft.commit()
                 }
                 R.id.mnuMyCountry -> {
-                    // Abrir SingleCountryTotalPieChartFragment
+                    // Abrir SingleCountryActivity
                     if (location.isNullOrBlank()) {
                         lifecycleScope.launch {
                             PremiumSingleCountryStats.country = countryDAO!!.getSingleCountryByISO(getLocationIfOffline())
@@ -277,7 +284,16 @@ class MainActivity : AppCompatActivity() {
                         getSingleCountryHistoricalData()
                     }
                 }
+                R.id.mnuContinentsInfo -> {
+                    tviTitleMain!!.text = "Continent Stats"
+                    // Abrir ContinentsInfoFragment
+                    val ft = supportFragmentManager.beginTransaction()
+                    ft.replace(R.id.flaMain, fragments[2])
+                    ft.addToBackStack(null)
+                    ft.commit()
+                }
             }
+            dlaMain!!.closeDrawers()
             true
         }
     }

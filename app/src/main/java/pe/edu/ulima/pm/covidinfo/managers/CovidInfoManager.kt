@@ -1,5 +1,6 @@
 package pe.edu.ulima.pm.covidinfo.managers
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.util.Log
@@ -12,6 +13,9 @@ import pe.edu.ulima.pm.covidinfo.models.persistence.entities.CountryEntity
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.FavoriteEntity
 import pe.edu.ulima.pm.covidinfo.models.services.NovelCOVIDService
 import pe.edu.ulima.pm.covidinfo.objects.NovelCOVIDCountries
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class CovidInfoManager {
 
@@ -197,5 +201,12 @@ class CovidInfoManager {
             continent.recoveredPerOneMillion,
             continent.criticalPerOneMillion
         )
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    fun convertLongToTime(time: Long): String {
+        val date = Date(time)
+        val format = SimpleDateFormat("yyyy/MM/dd HH:mm")
+        return format.format(date)
     }
 }

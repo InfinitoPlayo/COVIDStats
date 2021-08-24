@@ -17,6 +17,7 @@ import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
 import kotlinx.coroutines.launch
 import pe.edu.ulima.pm.covidinfo.R
+import pe.edu.ulima.pm.covidinfo.managers.CovidInfoManager
 import pe.edu.ulima.pm.covidinfo.models.AppDatabase
 import pe.edu.ulima.pm.covidinfo.models.persistence.dao.ContinentDAO
 import pe.edu.ulima.pm.covidinfo.models.persistence.entities.ContinentEntity
@@ -62,12 +63,11 @@ class GlobalInfoFragment: Fragment() {
     private var mortalityRatio: Double = 0.0
     private var newMortalityRatio: Double = 0.0
 
-    private var continents: ArrayList<ContinentEntity> = ArrayList()
     private var continentDAO: ContinentDAO? = null
     private var population: Long = 0
 
     //Para configurar el PieChart
-    private var dataList: ArrayList<PieEntry> = ArrayList()
+    private var dataList = arrayOfNulls<PieEntry>(3)
     private var colors: ArrayList<Int> = ArrayList()
     private lateinit var pchGlobalData: PieChart
 
@@ -108,21 +108,23 @@ class GlobalInfoFragment: Fragment() {
         tviNewMortalityRatio = view.findViewById(R.id.tviNewMortalityRatio)
 
         lifecycleScope.launch {
-            val continentList = ArrayList(continentDAO!!.getAllContinents())
+            val continentList: ArrayList<ContinentEntity> = ArrayList(continentDAO!!.getAllContinents())
+            val continents: ArrayList<ContinentEntity> = ArrayList()
+            resetValues()
+
             for (i in 1..continentList.size) {
                 if (i > continentList.size - 6) {
                     continents.add(continentList[i-1])
                     population += continentList[i-1].population!!
                 }
             }
-            Log.i("GlobalInfoFragment", population.toString())
 
-            setGlobalStats()
+            setGlobalStats(continents)
             setPieChart()
 
             //Seteando los TextView
             val df = DecimalFormat("###,###,###.##")
-            tviDateGlobal.text = "Last updated: ${convertLongToTime(continents[0].updated!!)}"
+            tviDateGlobal.text = "Last updated: ${CovidInfoManager.getInstance().convertLongToTime(continents[0].updated!!)}"
             tviConfirmedGlobal.text = df.format(totalConfirmed)
             tviDeathsGlobal.text = df.format(totalDeaths)
             tviRecoveredGlobal.text = df.format(totalRecovered)
@@ -134,7 +136,11 @@ class GlobalInfoFragment: Fragment() {
             tviNewCasesGlobal.text = df.format(newCases)
             tviNewRecoveredGlobal.text = df.format(newRecovered)
             tviNewDeathsGlobal.text = df.format(newDeaths)
-            tviNewActiveCasesGlobal.text = df.format(newActiveCases)
+            if (newActiveCases > 0) {
+                tviNewActiveCasesGlobal.text = df.format(newActiveCases)
+            } else {
+                tviNewActiveCasesGlobal.text = "-"
+            }
             tviNewCasesPerMillion.text = df.format(newCasesPerMillion)
             tviNewDeathsPerMillion.text = df.format(newDeathsPerMillion)
             tviMortalityRatio.text = String.format("%.2f" , mortalityRatio*100) + "%"
@@ -144,7 +150,7 @@ class GlobalInfoFragment: Fragment() {
 
     //Configurar el PieChart
     private fun setPieChart() {
-        val pieDataSet = PieDataSet(getList(), "")
+        val pieDataSet = PieDataSet(getList().toCollection(ArrayList()), "")
         val pieData = PieData(pieDataSet)
 
         colors.add(ContextCompat.getColor(requireContext(), R.color.green_500))
@@ -163,15 +169,15 @@ class GlobalInfoFragment: Fragment() {
         pchGlobalData.invalidate()
     }
 
-    private fun getList(): ArrayList<PieEntry>{
-        dataList.add(0, PieEntry(totalRecovered.toFloat(),"Recovered"))
-        dataList.add(1, PieEntry(totalActiveCases.toFloat(),"Active"))
-        dataList.add(2, PieEntry(totalDeaths.toFloat(),"Deaths"))
+    private fun getList(): Array<PieEntry?>{
+        dataList[0] = PieEntry(totalRecovered.toFloat(),"Recovered")
+        dataList[1] = PieEntry(totalActiveCases.toFloat(),"Active")
+        dataList[2] = PieEntry(totalDeaths.toFloat(),"Deaths")
 
         return dataList
     }
 
-    private fun setGlobalStats() {
+    private fun setGlobalStats(continents: ArrayList<ContinentEntity>) {
         continents.forEach {
             totalConfirmed += it.cases!!
             totalDeaths += it.deaths!!
@@ -192,11 +198,24 @@ class GlobalInfoFragment: Fragment() {
         newDeathsPerMillion = 1000000.0 * newDeaths / population.toDouble()
     }
 
-    @SuppressLint("SimpleDateFormat")
-    private fun convertLongToTime(time: Long): String {
-        val date = Date(time)
-        val format = SimpleDateFormat("yyyy/MM/dd HH:mm")
-        return format.format(date)
+    private fun resetValues() {
+        totalConfirmed = 0
+        totalDeaths = 0
+        totalRecovered = 0
+        totalActiveCases = 0
+        casesPerMillion = 0.0
+        deathsPerMillion = 0.0
+        totalTests = 0
+        testsPerMillion = 0.0
+        newCases = 0
+        newRecovered = 0
+        newDeaths = 0
+        newActiveCases = 0
+        newCasesPerMillion = 0.0
+        newDeathsPerMillion = 0.0
+        mortalityRatio = 0.0
+        newMortalityRatio = 0.0
+
     }
 
 }

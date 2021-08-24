@@ -7,6 +7,9 @@
             android:checked="true"
             android:title="@string/global_stats"/>
 
+        <item android:id="@+id/mnuContinentsInfo"
+            android:title="@string/continent_stats"/>
+
         <item android:id="@+id/mnuMyCountry"
             android:title="@string/my_country"/>
 

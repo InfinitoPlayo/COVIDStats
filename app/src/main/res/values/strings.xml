@@ -58,5 +58,6 @@
     <string name="last_day_data">Last day data</string>
     <string name="total_tests">Total tests</string>
     <string name="tests_per_million">Tests per million</string>
+    <string name="continent_stats">Continent Stats</string>
 
 </resources>
